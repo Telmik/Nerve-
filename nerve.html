@@ -585,6 +585,52 @@
       text-decoration-color: var(--ink-32);
     }
 
+    /* Встроенные изображения по месту в тексте */
+    .md-inline-figure {
+      margin: 1.15em 0;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-faint);
+      background-color: var(--surface);
+    }
+    .md-inline-figure img {
+      width: 100%;
+      max-height: 460px;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+    }
+    .img-remove-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 11px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      background-color: rgba(10, 11, 13, 0.72);
+      color: #F2F1EC;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.16s ease, background-color 0.16s ease;
+    }
+    .md-inline-figure:hover .img-remove-pill,
+    .note-gallery-card:hover .img-remove-pill,
+    .img-remove-pill:focus-visible {
+      opacity: 1;
+    }
+    .img-remove-pill:hover {
+      background-color: rgba(190, 45, 45, 0.88);
+    }
+    @media (hover: none) {
+      .img-remove-pill {
+        opacity: 0.9;
+      }
+    }
+
     /* ==========================================
        МОБИЛЬНАЯ НАВИГАЦИЯ (НИТЬ <-> ЗАМЕТКА)
        ========================================== */
@@ -1213,6 +1259,7 @@
           toastDeleted: 'Мысль удалена',
           toastCoolingSet: 'Уход в покой: {n} дн',
           toastPhotoAdded: 'Фото прикреплено',
+          toastPhotoRemoved: 'Фото удалено',
           toastPhotoErr: 'Не удалось прочитать изображение',
           toastImportedMd: 'Импортировано мыслей: {n}',
           toastImportEmpty: 'Файл пуст или не удалось прочитать текст',
@@ -1308,6 +1355,7 @@
           toastDeleted: 'Thought deleted',
           toastCoolingSet: 'Move to rest: {n}d',
           toastPhotoAdded: 'Photo attached',
+          toastPhotoRemoved: 'Photo removed',
           toastPhotoErr: 'Could not read image',
           toastImportedMd: 'Imported thoughts: {n}',
           toastImportEmpty: 'File is empty or unreadable',
@@ -1403,6 +1451,7 @@
           toastDeleted: '已删除',
           toastCoolingSet: '静置周期：{n}天',
           toastPhotoAdded: '图片已添加',
+          toastPhotoRemoved: '图片已移除',
           toastPhotoErr: '无法读取图片',
           toastImportedMd: '已导入笔记：{n}',
           toastImportEmpty: '文件为空或无法读取',
@@ -1498,6 +1547,7 @@
           toastDeleted: 'Idea eliminada',
           toastCoolingSet: 'Reposo en {n} d',
           toastPhotoAdded: 'Foto adjuntada',
+          toastPhotoRemoved: 'Foto eliminada',
           toastPhotoErr: 'No se pudo leer la imagen',
           toastImportedMd: 'Ideas importadas: {n}',
           toastImportEmpty: 'Archivo vacío o ilegible',
@@ -1593,6 +1643,7 @@
           toastDeleted: 'Gedanke gelöscht',
           toastCoolingSet: 'Ruhe nach {n} Tagen',
           toastPhotoAdded: 'Foto angehängt',
+          toastPhotoRemoved: 'Foto entfernt',
           toastPhotoErr: 'Bild konnte nicht geladen werden',
           toastImportedMd: 'Importierte Gedanken: {n}',
           toastImportEmpty: 'Datei leer oder unlesbar',
@@ -2102,14 +2153,49 @@
           .trim();
       }
 
-      function deriveTitle(rawTitle, body) {
-        const clean = (rawTitle || '').trim();
-        if (clean) return clean;
+      const INLINE_IMG_TOKEN_RE = /^!\[([^\]]*)\]\(img:(\d+)\)$/;
+
+      function getReferencedImageIndices(body) {
+        const used = new Set();
+        const lines = String(body || '').replace(/\r\n/g, '\n').split('\n');
+        lines.forEach(line => {
+          const m = line.trim().match(INLINE_IMG_TOKEN_RE);
+          if (m) {
+            const idx = Number(m[2]) - 1;
+            if (idx >= 0) used.add(idx);
+          }
+        });
+        return used;
+      }
+
+      function insertTextAtCursor(textarea, snippet) {
+        if (!textarea) return false;
+        const start = typeof textarea.selectionStart === 'number' ? textarea.selectionStart : textarea.value.length;
+        const end = typeof textarea.selectionEnd === 'number' ? textarea.selectionEnd : textarea.value.length;
+        const before = textarea.value.slice(0, start);
+        const after = textarea.value.slice(end);
+        const needLeadingBreak = before.length > 0 && !before.endsWith('\n\n')
+          ? (before.endsWith('\n') ? '\n' : '\n\n')
+          : '';
+        const needTrailingBreak = after.length > 0 && !after.startsWith('\n\n')
+          ? (after.startsWith('\n') ? '\n' : '\n\n')
+          : '\n';
+        const inserted = needLeadingBreak + snippet + needTrailingBreak;
+        textarea.value = before + inserted + after;
+        const nextPos = before.length + inserted.length;
+        textarea.focus();
+        textarea.setSelectionRange(nextPos, nextPos);
+        return true;
+      }
+
+      function deriveTitle(title, body) {
+        const cleanTitle = String(title || '').trim();
+        if (cleanTitle) return cleanTitle;
         const lines = String(body || '').split('\n');
         for (const line of lines) {
           const stripped = stripMarkdown(line);
           if (stripped) {
-            return stripped.length > 68 ? stripped.slice(0, 68).trim() + '…' : stripped;
+            return stripped.length > 64 ? stripped.slice(0, 64).trim() + '…' : stripped;
           }
         }
         return t('untitled');
@@ -2163,30 +2249,24 @@
         // Сноски NotebookLM вида [1] или [1, 2, 5]
         s = s.replace(/\[(\d+(?:\s*,\s*\d+)*)\]/g, '<sup class="nlm-cite">[$1]</sup>');
 
-        // Автоссылки https://... (не внутри уже созданного тега <a>)
-        s = s.replace(/(^|[\s(>])(https?:\/\/[^\s<]+)/g, (match, prefix, url) => {
-          const cleanUrl = url.replace(/[.,!?;:)\]]+$/, '');
-          const trailing = url.slice(cleanUrl.length);
-          return prefix + '<a href="' + cleanUrl + '" target="_blank" rel="noopener noreferrer">' + cleanUrl + '</a>' + trailing;
-        });
-
         // Жирный, курсив, зачёркнутый
         s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
         s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+        s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
         s = s.replace(/~~([^~]+)~~/g, '<del>$1</del>');
-        s = s.replace(/(^|[^\*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
 
         // Возвращаем inline code
-        s = s.replace(/%%CODE_(\d+)%%/g, (_, idx) => codeTokens[Number(idx)] || '');
+        s = s.replace(/%%CODE_(\d+)%%/g, (_, i) => codeTokens[Number(i)] || '');
         return s;
       }
 
-      function renderNoteBodyHtml(rawBody) {
+      function renderNoteBodyHtml(rawBody, noteImages = []) {
         const lines = String(rawBody || '').replace(/\r\n/g, '\n').split('\n');
         const out = [];
         let inCode = false;
         let codeLines = [];
         let listType = null; // 'ul' | 'ol' | 'check'
+        const imagesArr = Array.isArray(noteImages) ? noteImages : [];
 
         function closeList() {
           if (!listType) return;
@@ -2219,6 +2299,23 @@
           // Пустая строка
           if (!line.trim()) {
             closeList();
+            continue;
+          }
+
+          // Встроенное фото по месту в тексте: ![Фото](img:1)
+          const imgTokenMatch = line.trim().match(INLINE_IMG_TOKEN_RE);
+          if (imgTokenMatch) {
+            closeList();
+            const imgIdx = Number(imgTokenMatch[2]) - 1;
+            const src = imagesArr[imgIdx];
+            if (src) {
+              out.push(
+                '<figure class="md-inline-figure">' +
+                  '<img src="' + src + '" alt="' + escapeHtml(imgTokenMatch[1] || '') + '" data-lightbox-src="1" />' +
+                  '<button type="button" data-remove-img="' + imgIdx + '" class="img-remove-pill">' + escapeHtml(t('removePhoto')) + '</button>' +
+                '</figure>'
+              );
+            }
             continue;
           }
 
@@ -2605,18 +2702,20 @@
             '</div>' +
           '</div>';
 
-        // Галерея изображений заметки
+        // Галерея изображений заметки (показываем те, что не встроены внутрь текста по ![Фото](img:N))
+        const embeddedIndices = getReferencedImageIndices(note.body);
+        const looseImages = (note.images || [])
+          .map((src, idx) => ({ src, idx }))
+          .filter(item => isEditMode || !embeddedIndices.has(item.idx));
+
         let imagesHtml = '';
-        if (note.images && note.images.length > 0) {
+        if (looseImages.length > 0) {
           imagesHtml =
             '<div class="mt-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">' +
-              note.images.map((src, idx) =>
-                '<div class="relative group rounded-2xl overflow-hidden border t-border-faint t-surface">' +
+              looseImages.map(({ src, idx }) =>
+                '<div class="note-gallery-card relative group rounded-2xl overflow-hidden border t-border-faint t-surface">' +
                   '<img src="' + src + '" alt="" data-lightbox-src="1" class="w-full max-h-[360px] object-cover block cursor-zoom-in" />' +
-                  (isEditMode
-                    ? '<button type="button" data-remove-img="' + idx + '" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[11.5px] bg-black/70 text-white border border-white/15 cursor-pointer">' + escapeHtml(t('removePhoto')) + '</button>'
-                    : ''
-                  ) +
+                  '<button type="button" data-remove-img="' + idx + '" class="img-remove-pill">' + escapeHtml(t('removePhoto')) + '</button>' +
                 '</div>'
               ).join('') +
             '</div>';
@@ -2636,7 +2735,7 @@
             '<article id="noteReadArticle" class="w-full max-w-[700px] mx-auto px-5 sm:px-10 py-6 sm:py-11' + (animate ? ' reading-fade-in' : '') + '">' +
               '<div data-status-label class="md:hidden text-[12px] t-ink-40 mb-2">' + escapeHtml(statusCombined) + '</div>' +
               '<h1 class="text-[24px] sm:text-[28px] font-medium tracking-tight leading-snug t-hot m-0 mb-5">' + escapeHtml(titleText) + '</h1>' +
-              '<div class="md-body">' + renderNoteBodyHtml(note.body) + '</div>' +
+              '<div class="md-body">' + renderNoteBodyHtml(note.body, note.images) + '</div>' +
               imagesHtml +
             '</article>';
         }
@@ -3073,19 +3172,67 @@
       // ==========================================
       // 14. ПРИКРЕПЛЕНИЕ ФОТО (КНОПКА / CTRL+V / DROP)
       // ==========================================
+      function removeImageFromNote(note, removeIdx) {
+        if (!note || !Array.isArray(note.images)) return;
+        if (removeIdx < 0 || removeIdx >= note.images.length) return;
+        note.images.splice(removeIdx, 1);
+
+        // Обновляем токены ![...](img:N) в тексте заметки: удалённый убираем, остальные сдвигаем
+        const lines = String(note.body || '').replace(/\r\n/g, '\n').split('\n');
+        const nextLines = [];
+        lines.forEach(line => {
+          const m = line.trim().match(INLINE_IMG_TOKEN_RE);
+          if (!m) {
+            nextLines.push(line);
+            return;
+          }
+          const oneBased = Number(m[2]);
+          const zeroBased = oneBased - 1;
+          if (zeroBased === removeIdx) {
+            return; // удаляем строку с этим фото
+          }
+          if (zeroBased > removeIdx) {
+            nextLines.push('![' + m[1] + '](img:' + (oneBased - 1) + ')');
+          } else {
+            nextLines.push(line);
+          }
+        });
+        note.body = nextLines.join('\n').replace(/\n{3,}/g, '\n\n');
+
+        const editBodyEl = document.getElementById('editBodyInput');
+        if (editBodyEl && isEditMode) {
+          editBodyEl.value = note.body;
+          autoResizeTextarea(editBodyEl);
+        }
+      }
+
       async function attachImagesToCurrentNote(files) {
         const note = state.notes.find(n => n.id === selectedNoteId);
         if (!note) return;
         let added = 0;
+        const addedTokens = [];
         for (const f of Array.from(files || [])) {
           if (!f.type || !f.type.startsWith('image/')) continue;
           try {
             const webp = await compressImageFileToWebP(f);
             note.images.push(webp);
+            addedTokens.push('![' + t('addPhoto') + '](img:' + note.images.length + ')');
             added += 1;
           } catch (e) {}
         }
         if (added > 0) {
+          const snippet = addedTokens.join('\n\n');
+          const editBodyEl = document.getElementById('editBodyInput');
+          if (isEditMode && editBodyEl) {
+            // В режиме редактирования вставляем фото ровно туда, где стоит курсор!
+            insertTextAtCursor(editBodyEl, snippet);
+            note.body = editBodyEl.value;
+            autoResizeTextarea(editBodyEl);
+          } else {
+            // В режиме чтения добавляем в конец текста (всё равно внутри потока заметки)
+            const base = String(note.body || '').trimEnd();
+            note.body = base ? base + '\n\n' + snippet : snippet;
+          }
           note.lastHeatedAt = Date.now();
           await saveState();
           renderAll(false);
@@ -3097,15 +3244,18 @@
 
       async function attachImagesToNewModal(files) {
         let added = 0;
+        const addedTokens = [];
         for (const f of Array.from(files || [])) {
           if (!f.type || !f.type.startsWith('image/')) continue;
           try {
             const webp = await compressImageFileToWebP(f);
             newModalImages.push(webp);
+            addedTokens.push('![' + t('addPhoto') + '](img:' + newModalImages.length + ')');
             added += 1;
           } catch (e) {}
         }
         if (added > 0) {
+          insertTextAtCursor(newBodyInput, addedTokens.join('\n\n'));
           renderNewImagesPreview();
           showToast(t('toastPhotoAdded'));
         } else {
@@ -3131,24 +3281,26 @@
 
       // Клики внутри правого листа (действия, чекбоксы, фото, фокус)
       readingPane.addEventListener('click', (e) => {
-        // Лайтбокс изображения
-        const imgEl = e.target.closest('[data-lightbox-src]');
-        if (imgEl && !e.target.closest('[data-remove-img]')) {
-          lightboxImg.src = imgEl.getAttribute('src');
-          lightboxModal.classList.add('is-open');
-          return;
-        }
-
-        // Удаление фото в редакторе
+        // Удаление фото (работает и в чтении, и в редакторе)
         const remImgBtn = e.target.closest('[data-remove-img]');
         if (remImgBtn) {
+          e.stopPropagation();
           const note = state.notes.find(n => n.id === selectedNoteId);
           const idx = Number(remImgBtn.dataset.removeImg);
           if (note && Number.isInteger(idx)) {
-            note.images.splice(idx, 1);
+            removeImageFromNote(note, idx);
             saveState();
             renderAll(false);
+            showToast(t('toastPhotoRemoved'));
           }
+          return;
+        }
+
+        // Лайтбокс изображения
+        const imgEl = e.target.closest('[data-lightbox-src]');
+        if (imgEl) {
+          lightboxImg.src = imgEl.getAttribute('src');
+          lightboxModal.classList.add('is-open');
           return;
         }
 
