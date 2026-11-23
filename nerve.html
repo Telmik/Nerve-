@@ -1,0 +1,3598 @@
+<!DOCTYPE html>
+<html lang="ru" class="theme-dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta id="metaColorScheme" name="color-scheme" content="dark" />
+  <meta id="metaThemeColor" name="theme-color" content="#0A0B0D" />
+  <title>Nerve</title>
+
+  <!-- Иконка вкладки «Синапс» -->
+  <link
+    id="faviconLink"
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='10' fill='%230A0B0D'/%3E%3Cline x1='11' y1='11' x2='25' y2='25' stroke='%23F2F1EC' stroke-opacity='0.45' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='11' cy='11' r='5' fill='%23F2F1EC'/%3E%3Ccircle cx='25' cy='25' r='4.4' fill='%230A0B0D' stroke='%23F2F1EC' stroke-opacity='0.75' stroke-width='2.2'/%3E%3C/svg%3E"
+  />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Шрифт Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================
+       ПАЛИТРЫ И ТЕПЛОВЫЕ ТОКЕНЫ (4 ТЕМЫ)
+       ========================================== */
+    :root,
+    html.theme-dark {
+      color-scheme: dark;
+      --bg: #0A0B0D;
+      --surface: #111215;
+      --surface-elevated: #17191E;
+      --hover-bg: rgba(255, 255, 255, 0.045);
+      --chip-bg: rgba(255, 255, 255, 0.085);
+      --border-faint: rgba(255, 255, 255, 0.055);
+      --border-subtle: rgba(255, 255, 255, 0.11);
+      --hot: #F2F1EC;
+      --ink-84: rgba(242, 241, 236, 0.84);
+      --ink-62: rgba(242, 241, 236, 0.62);
+      --ink-40: rgba(242, 241, 236, 0.42);
+      --ink-32: rgba(242, 241, 236, 0.30);
+      --ink-18: rgba(242, 241, 236, 0.16);
+      --thread-line: rgba(242, 241, 236, 0.11);
+      --glow: rgba(242, 241, 236, 0.28);
+      --danger: #E06C6C;
+      --code-bg: rgba(255, 255, 255, 0.055);
+      --overlay: rgba(4, 5, 7, 0.72);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    html.theme-light {
+      color-scheme: only light;
+      --bg: #F4F3EE;
+      --surface: #ECEAE2;
+      --surface-elevated: #FAFAF7;
+      --hover-bg: rgba(22, 23, 26, 0.045);
+      --chip-bg: rgba(22, 23, 26, 0.08);
+      --border-faint: rgba(22, 23, 26, 0.07);
+      --border-subtle: rgba(22, 23, 26, 0.13);
+      --hot: #16171A;
+      --ink-84: rgba(22, 23, 26, 0.84);
+      --ink-62: rgba(22, 23, 26, 0.62);
+      --ink-40: rgba(22, 23, 26, 0.44);
+      --ink-32: rgba(22, 23, 26, 0.32);
+      --ink-18: rgba(22, 23, 26, 0.16);
+      --thread-line: rgba(22, 23, 26, 0.13);
+      --glow: rgba(22, 23, 26, 0.16);
+      --danger: #C24141;
+      --code-bg: rgba(22, 23, 26, 0.055);
+      --overlay: rgba(22, 23, 26, 0.36);
+    }
+
+    html.theme-sepia {
+      color-scheme: only light;
+      --bg: #EBE3D2;
+      --surface: #E2D8C3;
+      --surface-elevated: #F2EBDC;
+      --hover-bg: rgba(42, 33, 27, 0.05);
+      --chip-bg: rgba(42, 33, 27, 0.09);
+      --border-faint: rgba(42, 33, 27, 0.08);
+      --border-subtle: rgba(42, 33, 27, 0.14);
+      --hot: #2A211B;
+      --ink-84: rgba(42, 33, 27, 0.86);
+      --ink-62: rgba(42, 33, 27, 0.64);
+      --ink-40: rgba(42, 33, 27, 0.46);
+      --ink-32: rgba(42, 33, 27, 0.34);
+      --ink-18: rgba(42, 33, 27, 0.18);
+      --thread-line: rgba(42, 33, 27, 0.15);
+      --glow: rgba(42, 33, 27, 0.15);
+      --danger: #B34038;
+      --code-bg: rgba(42, 33, 27, 0.06);
+      --overlay: rgba(34, 26, 20, 0.42);
+    }
+
+    html.theme-slate {
+      color-scheme: dark;
+      --bg: #12151A;
+      --surface: #181C23;
+      --surface-elevated: #1F252F;
+      --hover-bg: rgba(230, 234, 240, 0.05);
+      --chip-bg: rgba(230, 234, 240, 0.095);
+      --border-faint: rgba(230, 234, 240, 0.065);
+      --border-subtle: rgba(230, 234, 240, 0.12);
+      --hot: #E6EAF0;
+      --ink-84: rgba(230, 234, 240, 0.85);
+      --ink-62: rgba(230, 234, 240, 0.64);
+      --ink-40: rgba(230, 234, 240, 0.44);
+      --ink-32: rgba(230, 234, 240, 0.30);
+      --ink-18: rgba(230, 234, 240, 0.16);
+      --thread-line: rgba(230, 234, 240, 0.12);
+      --glow: rgba(230, 234, 240, 0.24);
+      --danger: #E07575;
+      --code-bg: rgba(230, 234, 240, 0.06);
+      --overlay: rgba(7, 9, 13, 0.72);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--hot);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.24s ease, color 0.24s ease;
+    }
+
+    /* Утилиты цветов темы */
+    .t-bg { background-color: var(--bg); }
+    .t-surface { background-color: var(--surface); }
+    .t-elevated { background-color: var(--surface-elevated); }
+    .t-hot { color: var(--hot); }
+    .t-ink-84 { color: var(--ink-84); }
+    .t-ink-62 { color: var(--ink-62); }
+    .t-ink-40 { color: var(--ink-40); }
+    .t-ink-32 { color: var(--ink-32); }
+    .t-border-faint { border-color: var(--border-faint); }
+    .t-border-subtle { border-color: var(--border-subtle); }
+
+    /* Тонкие скроллбары */
+    .quiet-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-subtle) transparent;
+    }
+    .quiet-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .quiet-scroll::-webkit-scrollbar-track { background: transparent; }
+    .quiet-scroll::-webkit-scrollbar-thumb {
+      background-color: var(--border-subtle);
+      border-radius: 9999px;
+    }
+
+    /* Логотип возврата к истокам */
+    .logo-home-btn {
+      transition: opacity 0.2s ease, transform 0.2s var(--ease);
+    }
+    .logo-home-btn:hover svg,
+    .logo-home-btn:hover span {
+      color: var(--hot);
+    }
+    .logo-home-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Верхние тихие кнопки */
+    .header-ghost-btn {
+      color: var(--ink-40);
+      background: transparent;
+      border: 0;
+      padding: 6px 8px;
+      border-radius: 9999px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: color 0.18s ease, background-color 0.18s ease;
+    }
+    .header-ghost-btn:hover {
+      color: var(--hot);
+      background-color: var(--hover-bg);
+    }
+
+    .header-pill-btn {
+      color: var(--hot);
+      background-color: var(--hover-bg);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+    }
+    .header-pill-btn:hover {
+      background-color: var(--chip-bg);
+      border-color: var(--ink-32);
+    }
+    .header-pill-btn:active {
+      transform: scale(0.98);
+    }
+
+    .kbd-hint {
+      font-size: 10.5px;
+      color: var(--ink-32);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    /* ==========================================
+       ВЕРТИКАЛЬНАЯ ОСТЫВАЮЩАЯ НИТЬ (СЛЕВА)
+       ========================================== */
+    .thread-column {
+      border-right: 1px solid var(--border-faint);
+      background-color: var(--bg);
+    }
+
+    .thread-track {
+      position: relative;
+    }
+    .thread-track::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 16px;
+      bottom: 24px;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        var(--thread-line) 0%,
+        var(--thread-line) 85%,
+        transparent 100%
+      );
+      pointer-events: none;
+    }
+
+    .thread-node {
+      position: relative;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 12px 10px 34px;
+      cursor: pointer;
+      transition: background-color 0.16s ease, opacity 0.2s ease;
+    }
+    .thread-node:hover {
+      background-color: var(--hover-bg);
+    }
+    .thread-node.is-selected {
+      background-color: var(--chip-bg);
+    }
+
+    .node-dot {
+      position: absolute;
+      left: 11px;
+      top: 17px;
+      width: 9px;
+      height: 9px;
+      border-radius: 9999px;
+      transition: transform 0.2s var(--ease), background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Тепловые состояния узлов */
+    .thermal-hot .node-dot {
+      background-color: var(--hot);
+      box-shadow: 0 0 10px var(--glow);
+    }
+    .thermal-hot .node-title { color: var(--hot); }
+    .thermal-hot .node-preview { color: var(--ink-62); }
+    .thermal-hot .node-meta { color: var(--ink-40); }
+
+    .thermal-cooling .node-dot {
+      background-color: var(--ink-62);
+      transform: scale(0.86);
+    }
+    .thermal-cooling .node-title { color: var(--ink-84); }
+    .thermal-cooling .node-preview { color: var(--ink-40); }
+    .thermal-cooling .node-meta { color: var(--ink-32); }
+
+    .thermal-cold .node-dot {
+      background-color: var(--bg);
+      border: 1.5px solid var(--ink-40);
+      transform: scale(0.8);
+    }
+    .thermal-cold .node-title { color: var(--ink-62); }
+    .thermal-cold .node-preview { color: var(--ink-32); }
+    .thermal-cold .node-meta { color: var(--ink-32); }
+
+    /* Узел «Покой» внизу нити */
+    .rest-node {
+      position: relative;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 12px 10px 34px;
+      border-radius: 12px;
+      border: 0;
+      background: transparent;
+      color: var(--ink-40);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background-color 0.16s ease, color 0.16s ease;
+    }
+    .rest-node:hover {
+      background-color: var(--hover-bg);
+      color: var(--hot);
+    }
+    .rest-dot {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 9px;
+      height: 9px;
+      border-radius: 9999px;
+      background-color: var(--bg);
+      border: 1.5px dashed var(--ink-40);
+    }
+
+    /* Плавное появление заметки */
+    .reading-fade-in {
+      animation: readingIn 0.22s var(--ease) both;
+    }
+    @keyframes readingIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Иконочные кнопки панели заметки */
+    .icon-action-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--ink-40);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.16s ease, color 0.16s ease;
+    }
+    .icon-action-btn:hover {
+      background-color: var(--hover-bg);
+      color: var(--hot);
+    }
+    .icon-action-btn.is-active {
+      background-color: var(--chip-bg);
+      color: var(--hot);
+    }
+    .icon-action-btn.is-danger:hover {
+      color: var(--danger);
+      background-color: rgba(224, 108, 108, 0.1);
+    }
+
+    /* Выпадающее меню действий заметки (···) с понятными подписями */
+    .note-menu-wrap {
+      position: relative;
+    }
+    .note-menu-popover {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 220px;
+      background-color: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.36);
+      z-index: 40;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .note-menu-popover.is-open {
+      display: flex;
+      animation: cardPop 0.16s var(--ease) both;
+    }
+    .note-menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--ink-84);
+      font-size: 13.5px;
+      text-align: left;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.14s ease, color 0.14s ease;
+    }
+    .note-menu-item:hover {
+      background-color: var(--hover-bg);
+      color: var(--hot);
+    }
+    .note-menu-item.is-active {
+      color: var(--hot);
+      background-color: var(--chip-bg);
+    }
+    .note-menu-item.is-danger {
+      color: var(--danger);
+    }
+    .note-menu-item.is-danger:hover {
+      background-color: rgba(224, 108, 108, 0.12);
+    }
+    .note-menu-divider {
+      height: 1px;
+      background-color: var(--border-faint);
+      margin: 4px 6px;
+    }
+
+    /* ==========================================
+       ТИПОГРАФИКА MARKDOWN + NOTEBOOKLM + ЧЕКБОКСЫ
+       ========================================== */
+    .md-body {
+      font-size: 15.5px;
+      line-height: 1.72;
+      color: var(--ink-84);
+      word-break: break-word;
+    }
+    .md-body h1 {
+      font-size: 1.45em;
+      font-weight: 500;
+      color: var(--hot);
+      margin: 1.3em 0 0.5em;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
+    }
+    .md-body h2 {
+      font-size: 1.24em;
+      font-weight: 500;
+      color: var(--hot);
+      margin: 1.25em 0 0.45em;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+    }
+    .md-body h3, .md-body h4 {
+      font-size: 1.06em;
+      font-weight: 500;
+      color: var(--hot);
+      margin: 1.1em 0 0.4em;
+      line-height: 1.4;
+    }
+    .md-body > :first-child { margin-top: 0; }
+    .md-body p {
+      margin: 0 0 0.9em;
+    }
+    .md-body strong {
+      font-weight: 600;
+      color: var(--hot);
+    }
+    .md-body em {
+      font-style: italic;
+    }
+    .md-body del {
+      color: var(--ink-40);
+      text-decoration: line-through;
+    }
+    .md-body a {
+      color: var(--hot);
+      text-decoration: underline;
+      text-decoration-color: var(--ink-32);
+      text-underline-offset: 3px;
+      transition: text-decoration-color 0.16s ease;
+    }
+    .md-body a:hover {
+      text-decoration-color: var(--hot);
+    }
+    .md-body blockquote {
+      margin: 1em 0;
+      padding: 4px 0 4px 16px;
+      border-left: 2px solid var(--border-subtle);
+      color: var(--ink-62);
+    }
+    .md-body ul, .md-body ol {
+      margin: 0.4em 0 1em;
+      padding-left: 22px;
+    }
+    .md-body ul { list-style-type: disc; }
+    .md-body ol { list-style-type: decimal; }
+    .md-body li {
+      margin: 0.28em 0;
+    }
+    .md-body li::marker {
+      color: var(--ink-32);
+    }
+    .md-body code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88em;
+      background-color: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: var(--hot);
+    }
+    .md-body pre {
+      margin: 1em 0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background-color: var(--surface);
+      border: 1px solid var(--border-faint);
+      overflow-x: auto;
+    }
+    .md-body pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--ink-84);
+    }
+    .md-body hr {
+      border: 0;
+      border-top: 1px solid var(--border-faint);
+      margin: 1.5em 0;
+    }
+
+    /* Тихие сноски NotebookLM [1], [2, 3] */
+    .nlm-cite {
+      font-size: 0.72em;
+      color: var(--ink-32);
+      margin-left: 2px;
+      font-variant-numeric: tabular-nums;
+      user-select: none;
+    }
+
+    /* Интерактивные чекбоксы */
+    .md-checklist {
+      list-style: none !important;
+      padding-left: 0 !important;
+      margin: 0.5em 0 1em;
+    }
+    .md-check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 4px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .md-check-box {
+      width: 17px;
+      height: 17px;
+      margin-top: 4px;
+      border-radius: 5px;
+      border: 1.4px solid var(--ink-40);
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.16s ease, border-color 0.16s ease;
+    }
+    .md-check-item:hover .md-check-box {
+      border-color: var(--hot);
+    }
+    .md-check-item.is-checked .md-check-box {
+      background-color: var(--hot);
+      border-color: var(--hot);
+      color: var(--bg);
+    }
+    .md-check-item.is-checked .md-check-text {
+      color: var(--ink-40);
+      text-decoration: line-through;
+      text-decoration-color: var(--ink-32);
+    }
+
+    /* ==========================================
+       МОБИЛЬНАЯ НАВИГАЦИЯ (НИТЬ <-> ЗАМЕТКА)
+       ========================================== */
+    @media (max-width: 767px) {
+      .thread-column {
+        width: 100% !important;
+        border-right: 0;
+      }
+      .reading-pane {
+        display: none;
+      }
+      body.mobile-reading-open .thread-column {
+        display: none;
+      }
+      body.mobile-reading-open .reading-pane {
+        display: flex;
+      }
+    }
+
+    /* ==========================================
+       РЕЖИМ ФОКУСА (F)
+       ========================================== */
+    body.focus-mode .app-header {
+      display: none !important;
+    }
+    body.focus-mode .thread-column {
+      display: none !important;
+    }
+    body.focus-mode .reading-pane {
+      display: flex !important;
+      width: 100%;
+    }
+    body.focus-mode .normal-note-toolbar {
+      display: none !important;
+    }
+    body.focus-mode .focus-bar {
+      display: flex !important;
+    }
+
+    /* ==========================================
+       НАСТРОЙКИ И МОДАЛКИ
+       ========================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: var(--overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.is-open {
+      display: flex;
+      animation: modalFade 0.18s ease both;
+    }
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-card {
+      width: 100%;
+      background-color: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      animation: cardPop 0.22s var(--ease) both;
+    }
+    @keyframes cardPop {
+      from { opacity: 0; transform: translateY(8px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Выбор темы */
+    .theme-swatch-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 8px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink-62);
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    }
+    .theme-swatch-btn:hover {
+      background-color: var(--hover-bg);
+      color: var(--hot);
+    }
+    .theme-swatch-btn.is-selected {
+      background-color: var(--chip-bg);
+      border-color: var(--border-subtle);
+      color: var(--hot);
+    }
+
+    /* Кнопки языка и срока остывания */
+    .pill-choice-btn,
+    .cooling-option-btn {
+      padding: 6px 13px;
+      border-radius: 9999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink-62);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    }
+    .pill-choice-btn:hover,
+    .cooling-option-btn:hover {
+      background-color: var(--hover-bg);
+      color: var(--hot);
+    }
+    .pill-choice-btn.is-selected,
+    .cooling-option-btn.is-selected {
+      color: var(--hot);
+      background-color: var(--chip-bg);
+      border-color: var(--border-subtle);
+    }
+
+    /* Поле кастомного срока остывания */
+    .custom-cooling-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 11px;
+      border-radius: 9999px;
+      background-color: transparent;
+      border: 1px solid var(--border-subtle);
+      transition: background-color 0.18s ease, border-color 0.18s ease;
+      cursor: text;
+    }
+    .custom-cooling-pill:hover,
+    .custom-cooling-pill:focus-within {
+      background-color: var(--hover-bg);
+      border-color: var(--ink-32);
+    }
+    .custom-cooling-pill.is-selected {
+      background-color: var(--chip-bg);
+      border-color: var(--border-subtle);
+    }
+    .custom-cooling-input {
+      width: 44px;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      font-size: 13px;
+      color: var(--hot);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      -moz-appearance: textfield;
+    }
+    .custom-cooling-input:focus { outline: none; }
+    .custom-cooling-input::placeholder { color: var(--ink-32); }
+    .custom-cooling-input::-webkit-outer-spin-button,
+    .custom-cooling-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Кнопки данных в Настройках */
+    .data-btn {
+      padding: 8px 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background-color: transparent;
+      color: var(--ink-84);
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    }
+    .data-btn:hover {
+      background-color: var(--hover-bg);
+      border-color: var(--ink-32);
+      color: var(--hot);
+    }
+
+    /* Тост уведомлений */
+    .toast-pill {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 16px);
+      background-color: var(--surface-elevated);
+      color: var(--hot);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 9px 18px;
+      font-size: 13px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 80;
+      transition: opacity 0.22s ease, transform 0.24s var(--ease);
+      max-width: calc(100vw - 32px);
+      text-align: center;
+    }
+    .toast-pill.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* Drag & Drop подсветка */
+    .drop-active {
+      outline: 1.5px dashed var(--ink-40);
+      outline-offset: -8px;
+    }
+  </style>
+</head>
+<body class="h-[100dvh] w-full flex flex-col select-none">
+
+  <!-- Тихая верхняя панель с логотипом «Синапс» -->
+  <header class="app-header w-full flex items-center justify-between px-4 sm:px-8 pt-3.5 sm:pt-5 pb-3 shrink-0 z-20 border-b t-border-faint">
+    <button
+      id="logoHomeBtn"
+      type="button"
+      class="logo-home-btn flex items-center gap-2.5 shrink-0 select-none bg-transparent border-0 p-1 -ml-1 rounded-lg cursor-pointer"
+    >
+      <svg class="w-[16px] h-[16px] t-ink-62 transition-colors" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+        <line x1="11" y1="11" x2="25" y2="25" stroke="currentColor" stroke-opacity="0.42" stroke-width="2.5" stroke-linecap="round" />
+        <circle cx="11" cy="11" r="5" fill="currentColor" />
+        <circle cx="25" cy="25" r="4.4" stroke="currentColor" stroke-opacity="0.72" stroke-width="2.2" />
+      </svg>
+      <span class="text-[12px] tracking-[0.22em] uppercase t-ink-40 font-normal transition-colors">
+        nerve
+      </span>
+    </button>
+
+    <div class="flex items-center gap-2 sm:gap-5">
+      <button id="openSearchBtn" type="button" class="header-ghost-btn">
+        <span data-i18n="navSearch">Поиск</span>
+        <span class="kbd-hint hidden sm:inline">/</span>
+      </button>
+
+      <button id="openNewBtn" type="button" class="header-pill-btn">
+        <span data-i18n="navNew">+ Новая</span>
+        <span class="kbd-hint hidden sm:inline">N</span>
+      </button>
+
+      <button id="openSettingsBtn" type="button" class="header-ghost-btn">
+        <span data-i18n="navSettings">Настройки</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Основная рабочая область: вертикальная нить слева + лист заметки справа -->
+  <main class="flex-1 min-h-0 flex w-full overflow-hidden">
+
+    <!-- Левая колонка: вертикальная остывающая нить -->
+    <aside
+      id="timelineViewport"
+      class="thread-column w-full md:w-[308px] lg:w-[330px] shrink-0 h-full overflow-y-auto quiet-scroll px-3 sm:px-4 py-4"
+    >
+      <div id="nodesRow" class="thread-track flex flex-col gap-1 pb-8"></div>
+    </aside>
+
+    <!-- Правая область: чистый спокойный лист для чтения и редактирования -->
+    <section
+      id="readingPane"
+      class="reading-pane flex-1 min-w-0 h-full flex flex-col overflow-hidden select-text"
+    ></section>
+
+  </main>
+
+  <!-- Скрытые input для файлов (фото, .md, .json) -->
+  <input id="noteImageInput" type="file" accept="image/*" multiple class="hidden" />
+  <input id="newImageInput" type="file" accept="image/*" multiple class="hidden" />
+  <input id="mdFileInput" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown,*/*" multiple class="hidden" />
+  <input id="jsonFileInput" type="file" accept=".json,application/json,text/plain,*/*" class="hidden" />
+
+  <!-- ==========================================
+       МОДАЛКА: НОВАЯ МЫСЛЬ
+       ========================================== -->
+  <div id="newModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div id="newModalCard" class="modal-card max-w-[600px] flex flex-col max-h-[88dvh]">
+      <div class="flex items-center justify-between px-5 pt-4 pb-3 border-b t-border-faint">
+        <span data-i18n="newModalTitle" class="text-[12.5px] t-ink-40">Новая мысль</span>
+        <button id="closeNewBtn" type="button" data-i18n="close" class="header-ghost-btn text-[12.5px]">Закрыть</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto quiet-scroll flex flex-col gap-3 flex-1">
+        <input
+          id="newTitleInput"
+          type="text"
+          data-i18n-placeholder="titlePh"
+          placeholder="Заголовок (необязательно)"
+          class="w-full bg-transparent border-0 text-[19px] font-medium t-hot placeholder:text-[color:var(--ink-32)] focus:outline-none"
+        />
+
+        <textarea
+          id="newBodyInput"
+          rows="8"
+          data-i18n-placeholder="bodyPh"
+          placeholder="Выгрузи мысль, план или вставь конспект из NotebookLM..."
+          class="w-full bg-transparent border-0 resize-none text-[15px] leading-relaxed t-ink-84 placeholder:text-[color:var(--ink-32)] focus:outline-none quiet-scroll"
+        ></textarea>
+
+        <div id="newImagesPreview" class="flex flex-wrap gap-2.5 empty:hidden pt-1"></div>
+      </div>
+
+      <div class="flex items-center justify-between px-5 py-3.5 border-t t-border-faint">
+        <div class="flex items-center gap-1.5">
+          <button id="newAddPhotoBtn" type="button" class="header-ghost-btn text-[12.5px]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+            <span data-i18n="addPhoto">Фото</span>
+          </button>
+
+          <button id="newAddCheckBtn" type="button" class="header-ghost-btn text-[12.5px]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="3" />
+              <path d="M8.5 12.2l2.4 2.4 4.8-5.2" />
+            </svg>
+            <span data-i18n="addCheckbox">Чекбокс</span>
+          </button>
+        </div>
+
+        <button id="saveNewBtn" type="button" class="header-pill-btn text-[13px]">
+          <span data-i18n="save">Сохранить</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       МОДАЛКА: ПОИСК
+       ========================================== -->
+  <div id="searchModal" class="modal-backdrop items-start pt-[10vh]" role="dialog" aria-modal="true">
+    <div class="modal-card max-w-[540px] flex flex-col max-h-[74dvh]">
+      <div class="flex items-center gap-3 px-5 py-3.5 border-b t-border-faint">
+        <svg class="w-4 h-4 t-ink-40 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-3.5-3.5" />
+        </svg>
+        <input
+          id="searchInput"
+          type="text"
+          data-i18n-placeholder="searchPh"
+          placeholder="Найти в мыслях и в покое..."
+          class="w-full bg-transparent border-0 text-[15px] t-hot placeholder:text-[color:var(--ink-32)] focus:outline-none"
+        />
+        <button id="closeSearchBtn" type="button" data-i18n="close" class="header-ghost-btn text-[12px] shrink-0">Закрыть</button>
+      </div>
+
+      <div id="searchResults" class="overflow-y-auto quiet-scroll p-2.5 flex flex-col gap-1"></div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       МОДАЛКА: ПОКОЙ (АРХИВ ОСТЫВШИХ МЫСЛЕЙ)
+       ========================================== -->
+  <div id="restModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-card max-w-[540px] flex flex-col max-h-[82dvh]">
+      <div class="flex items-center justify-between px-5 pt-4 pb-3 border-b t-border-faint">
+        <div>
+          <h2 data-i18n="restTitle" class="text-[15px] font-medium t-hot m-0">Покой</h2>
+          <p data-i18n="restSub" class="text-[12px] t-ink-40 m-0 mt-0.5">Мысли, которые остыли и ушли с глаз</p>
+        </div>
+        <button id="closeRestBtn" type="button" data-i18n="close" class="header-ghost-btn text-[12.5px]">Закрыть</button>
+      </div>
+
+      <div id="restList" class="overflow-y-auto quiet-scroll p-3 flex flex-col gap-1.5"></div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       МОДАЛКА: НАСТРОЙКИ
+       ========================================== -->
+  <div id="settingsModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-card max-w-[490px] flex flex-col max-h-[88dvh]">
+      <div class="flex items-center justify-between px-5 pt-4 pb-3 border-b t-border-faint">
+        <h2 data-i18n="settingsTitle" class="text-[16px] font-medium t-hot m-0">Настройки</h2>
+        <button id="closeSettingsBtn" type="button" data-i18n="close" class="header-ghost-btn text-[12.5px]">Закрыть</button>
+      </div>
+
+      <div class="overflow-y-auto quiet-scroll px-5 py-5 flex flex-col gap-6">
+        <!-- Тема -->
+        <div>
+          <div data-i18n="themeLabel" class="text-[12px] t-ink-40 mb-3">Тема</div>
+          <div id="themeSwatches" class="grid grid-cols-4 gap-2">
+            <button type="button" data-theme="dark" class="theme-swatch-btn">
+              <span class="w-7 h-7 rounded-full flex items-center justify-center border border-white/15" style="background-color:#0A0B0D;">
+                <span class="w-1.5 h-1.5 rounded-full" style="background-color:#F2F1EC;"></span>
+              </span>
+              <span data-i18n="themeDark">Графит</span>
+            </button>
+
+            <button type="button" data-theme="light" class="theme-swatch-btn">
+              <span class="w-7 h-7 rounded-full flex items-center justify-center border border-black/15" style="background-color:#F4F3EE;">
+                <span class="w-1.5 h-1.5 rounded-full" style="background-color:#16171A;"></span>
+              </span>
+              <span data-i18n="themeLight">Бумага</span>
+            </button>
+
+            <button type="button" data-theme="sepia" class="theme-swatch-btn">
+              <span class="w-7 h-7 rounded-full flex items-center justify-center border border-black/15" style="background-color:#EBE3D2;">
+                <span class="w-1.5 h-1.5 rounded-full" style="background-color:#2A211B;"></span>
+              </span>
+              <span data-i18n="themeSepia">Книга</span>
+            </button>
+
+            <button type="button" data-theme="slate" class="theme-swatch-btn">
+              <span class="w-7 h-7 rounded-full flex items-center justify-center border border-white/15" style="background-color:#12151A;">
+                <span class="w-1.5 h-1.5 rounded-full" style="background-color:#E6EAF0;"></span>
+              </span>
+              <span data-i18n="themeSlate">Ночь</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Язык -->
+        <div class="pt-5 border-t t-border-faint">
+          <div data-i18n="langLabel" class="text-[12px] t-ink-40 mb-3">Язык</div>
+          <div id="langOptions" class="flex items-center flex-wrap gap-1.5">
+            <button type="button" data-lang="ru" class="pill-choice-btn">Русский</button>
+            <button type="button" data-lang="en" class="pill-choice-btn">English</button>
+            <button type="button" data-lang="zh" class="pill-choice-btn">简体中文</button>
+            <button type="button" data-lang="es" class="pill-choice-btn">Español</button>
+            <button type="button" data-lang="de" class="pill-choice-btn">Deutsch</button>
+          </div>
+        </div>
+
+        <!-- Уход в покой -->
+        <div class="pt-5 border-t t-border-faint">
+          <div class="flex items-baseline justify-between mb-3">
+            <span data-i18n="coolingLabel" class="text-[12px] t-ink-40">Уход в покой</span>
+            <span data-i18n="coolingSub" class="text-[11px] t-ink-32">без взаимодействия</span>
+          </div>
+          <div id="coolingOptions" class="flex items-center flex-wrap gap-2">
+            <button type="button" data-cooling="7" data-i18n="days7" class="cooling-option-btn">7 дн</button>
+            <button type="button" data-cooling="14" data-i18n="days14" class="cooling-option-btn">14 дн</button>
+            <button type="button" data-cooling="30" data-i18n="days30" class="cooling-option-btn">30 дн</button>
+            <label id="customCoolingWrap" class="custom-cooling-pill">
+              <input
+                id="customCoolingInput"
+                type="number"
+                min="1"
+                max="999"
+                step="1"
+                inputmode="numeric"
+                data-i18n-placeholder="customDaysPh"
+                placeholder="Своё"
+                class="custom-cooling-input"
+              />
+              <span data-i18n="daysUnit" class="text-[12px] t-ink-40 shrink-0">дн</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Данные, импорт и полная резервная копия -->
+        <div class="pt-5 border-t t-border-faint">
+          <div data-i18n="dataLabel" class="text-[12px] t-ink-40 mb-3">Данные</div>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="settingsImportMdBtn" type="button" data-i18n="importMd" class="data-btn">Импорт .md / .txt</button>
+            <button id="settingsExportMdBtn" type="button" data-i18n="exportMd" class="data-btn">Экспорт (.md)</button>
+            <button id="settingsBackupJsonBtn" type="button" data-i18n="backupJson" class="data-btn">Бэкап (.json)</button>
+            <button id="settingsRestoreJsonBtn" type="button" data-i18n="restoreJson" class="data-btn">Восстановить (.json)</button>
+          </div>
+        </div>
+
+        <!-- Сообщество и ссылки -->
+        <div class="pt-5 border-t t-border-faint">
+          <div data-i18n="communityLabel" class="text-[12px] t-ink-40 mb-3">Сообщество</div>
+          <div class="grid grid-cols-2 gap-2">
+            <a
+              href="https://t.me/+f9l8_uI4SjI1YjEy"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="data-btn flex items-center justify-center gap-2 no-underline"
+            >
+              <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 3L3 10.5l6.5 2.5L19 5.5l-7.5 8.5v5.5l3.5-3.5 4 3L21 3z" />
+              </svg>
+              <span>Telegram</span>
+            </a>
+            <a
+              href="https://github.com/Telmik/Nerve-"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="data-btn flex items-center justify-center gap-2 no-underline"
+            >
+              <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 19c-4.5 1.5-4.5-2.5-6-3m12 6v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V22" />
+              </svg>
+              <span>GitHub</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Тихий статус хранилища -->
+        <div class="pt-4 border-t t-border-faint flex items-center justify-between text-[11.5px] t-ink-32">
+          <span>Nerve</span>
+          <span id="storageStatusText">Сохранено</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       МОДАЛКА: ПРОСМОТР ИЗОБРАЖЕНИЯ (LIGHTBOX)
+       ========================================== -->
+  <div id="lightboxModal" class="modal-backdrop p-4 sm:p-8" role="dialog" aria-modal="true">
+    <div class="relative max-w-[92vw] max-h-[88dvh] flex flex-col items-center">
+      <img id="lightboxImg" src="" alt="" class="max-w-full max-h-[82dvh] rounded-2xl object-contain shadow-2xl" />
+      <button id="closeLightboxBtn" type="button" data-i18n="close" class="header-pill-btn mt-4 text-[12.5px]">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- Тихий тост -->
+  <div id="toastEl" class="toast-pill" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ==========================================
+      // 1. КОНСТАНТЫ И СЛОВАРИ (5 ЯЗЫКОВ)
+      // ==========================================
+      const DB_NAME = 'nerve_local_db_v1';
+      const DB_STORE = 'kv';
+      const DB_STATE_KEY = 'app_state';
+      const LS_BACKUP_KEY = 'nerve_fallback_v1';
+      const LS_THEME_KEY = 'nerve_theme';
+      const LS_LANG_KEY = 'nerve_lang';
+
+      const VALID_THEMES = ['dark', 'light', 'sepia', 'slate'];
+      const VALID_LANGS = ['ru', 'en', 'zh', 'es', 'de'];
+      const THEME_META_BG = {
+        dark: '#0A0B0D',
+        light: '#F4F3EE',
+        sepia: '#EBE3D2',
+        slate: '#12151A'
+      };
+      const PRESET_COOLING_DAYS = [7, 14, 30];
+      const MIN_COOLING_DAYS = 1;
+      const MAX_COOLING_DAYS = 999;
+      const DAY_MS = 24 * 60 * 60 * 1000;
+
+      function normalizeCoolingDays(val) {
+        const n = Math.round(Number(val));
+        if (!Number.isFinite(n) || n < MIN_COOLING_DAYS) return null;
+        return Math.min(MAX_COOLING_DAYS, Math.max(MIN_COOLING_DAYS, n));
+      }
+
+      const I18N = {
+        ru: {
+          navSearch: 'Поиск',
+          navNew: '+ Новая',
+          navSettings: 'Настройки',
+          close: 'Закрыть',
+          save: 'Сохранить',
+          done: 'Готово',
+          backToThread: 'К нити',
+          newModalTitle: 'Новая мысль',
+          titlePh: 'Заголовок (необязательно)',
+          bodyPh: 'Выгрузи мысль, план или вставь конспект из NotebookLM...',
+          addPhoto: 'Фото',
+          addCheckbox: 'Чекбокс',
+          searchPh: 'Найти в мыслях и в покое...',
+          searchEmpty: 'Ничего не найдено',
+          restTitle: 'Покой',
+          restSub: 'Мысли, которые остыли и ушли с глаз',
+          restEmpty: 'В покое пока тихо',
+          restNodeLabel: 'Покой',
+          settingsTitle: 'Настройки',
+          themeLabel: 'Тема',
+          themeDark: 'Графит',
+          themeLight: 'Бумага',
+          themeSepia: 'Книга',
+          themeSlate: 'Ночь',
+          langLabel: 'Язык',
+          coolingLabel: 'Уход в покой',
+          coolingSub: 'без взаимодействия',
+          days7: '7 дн',
+          days14: '14 дн',
+          days30: '30 дн',
+          customDaysPh: 'Своё',
+          daysUnit: 'дн',
+          dataLabel: 'Данные',
+          communityLabel: 'Сообщество',
+          importMd: 'Импорт .md / .txt',
+          exportMd: 'Экспорт (.md)',
+          backupJson: 'Бэкап (.json)',
+          restoreJson: 'Восстановить (.json)',
+          savedStatus: 'Сохранено · {n}',
+          today: 'Сегодня',
+          daysAgo: '{n} дн',
+          statePinned: 'На якоре',
+          stateHot: 'Горячая',
+          stateCooling: 'Остывает',
+          stateCold: 'Холодная',
+          stateRested: 'В покое',
+          untitled: 'Без названия',
+          emptyThread: 'Нить пуста — выгрузи первую мысль',
+          calmPrompt: 'Выбери мысль на нити или начни новую',
+          tipHome: 'Скрыть заметку и вернуться к началу нити',
+          tipPin: 'Якорь — закрепить наверху и не давать остывать',
+          tipHeat: 'Согреть — вернуть наверх нити',
+          tipPhoto: 'Добавить фото',
+          tipEdit: 'Редактировать (E)',
+          tipFocus: 'Режим фокуса (F)',
+          tipRest: 'Убрать в покой',
+          tipWake: 'Вернуть из покоя в нить',
+          tipDelete: 'Удалить мысль',
+          confirmDelete: 'Удалить?',
+          focusExit: 'Выйти',
+          focusStart: 'Старт',
+          focusPause: 'Пауза',
+          focusReset: 'Сброс',
+          focusDone: 'Сессия фокуса завершена',
+          toastCreated: 'Мысль добавлена на нить',
+          toastHeated: 'Мысль согрета',
+          toastPinned: 'Закреплено якорем',
+          toastUnpinned: 'Якорь снят',
+          toastRested: 'Убрано в покой',
+          toastWoke: 'Возвращено в нить',
+          toastDeleted: 'Мысль удалена',
+          toastCoolingSet: 'Уход в покой: {n} дн',
+          toastPhotoAdded: 'Фото прикреплено',
+          toastPhotoErr: 'Не удалось прочитать изображение',
+          toastImportedMd: 'Импортировано мыслей: {n}',
+          toastImportEmpty: 'Файл пуст или не удалось прочитать текст',
+          toastExportedMd: 'База экспортирована в .md',
+          toastBackupSaved: 'Полный бэкап (.json) сохранён',
+          toastRestoredJson: 'Восстановлено мыслей: {n}',
+          toastInvalidJson: 'Файл не похож на бэкап Nerve (.json)',
+          wakeBtn: 'Согреть',
+          openBtn: 'Открыть',
+          removePhoto: 'Убрать',
+          editBtn: 'Править',
+          moreActions: 'Действия',
+          actPin: 'Закрепить якорем',
+          actUnpin: 'Снять якорь',
+          actHeat: 'Согреть (наверх)',
+          actPhoto: 'Прикрепить фото',
+          actFocus: 'Режим фокуса',
+          actRest: 'Убрать в покой',
+          actWake: 'Вернуть в нить',
+          actDelete: 'Удалить мысль'
+        },
+        en: {
+          navSearch: 'Search',
+          navNew: '+ New',
+          navSettings: 'Settings',
+          close: 'Close',
+          save: 'Save',
+          done: 'Done',
+          backToThread: 'Thread',
+          newModalTitle: 'New thought',
+          titlePh: 'Title (optional)',
+          bodyPh: 'Drop a thought, checklist, or paste a NotebookLM summary...',
+          addPhoto: 'Photo',
+          addCheckbox: 'Checkbox',
+          searchPh: 'Search active and rested thoughts...',
+          searchEmpty: 'Nothing found',
+          restTitle: 'Rest',
+          restSub: 'Thoughts that cooled down and stepped out of sight',
+          restEmpty: 'Quiet in here',
+          restNodeLabel: 'Rest',
+          settingsTitle: 'Settings',
+          themeLabel: 'Theme',
+          themeDark: 'Graphite',
+          themeLight: 'Paper',
+          themeSepia: 'Book',
+          themeSlate: 'Night',
+          langLabel: 'Language',
+          coolingLabel: 'Move to rest',
+          coolingSub: 'without interaction',
+          days7: '7d',
+          days14: '14d',
+          days30: '30d',
+          customDaysPh: 'Custom',
+          daysUnit: 'd',
+          dataLabel: 'Data',
+          communityLabel: 'Community',
+          importMd: 'Import .md / .txt',
+          exportMd: 'Export (.md)',
+          backupJson: 'Backup (.json)',
+          restoreJson: 'Restore (.json)',
+          savedStatus: 'Saved · {n}',
+          today: 'Today',
+          daysAgo: '{n}d',
+          statePinned: 'Anchored',
+          stateHot: 'Hot',
+          stateCooling: 'Cooling',
+          stateCold: 'Cold',
+          stateRested: 'In rest',
+          untitled: 'Untitled',
+          emptyThread: 'Thread is clear — capture your first thought',
+          calmPrompt: 'Select a thought on the thread or create a new one',
+          tipHome: 'Hide note and return to top of thread',
+          tipPin: 'Anchor — pin at top and stop cooling',
+          tipHeat: 'Heat up — bring back to top',
+          tipPhoto: 'Attach photo',
+          tipEdit: 'Edit (E)',
+          tipFocus: 'Focus mode (F)',
+          tipRest: 'Send to rest',
+          tipWake: 'Bring back to thread',
+          tipDelete: 'Delete thought',
+          confirmDelete: 'Delete?',
+          focusExit: 'Exit',
+          focusStart: 'Start',
+          focusPause: 'Pause',
+          focusReset: 'Reset',
+          focusDone: 'Focus session complete',
+          toastCreated: 'Thought added to thread',
+          toastHeated: 'Thought heated up',
+          toastPinned: 'Anchored to top',
+          toastUnpinned: 'Anchor removed',
+          toastRested: 'Moved to rest',
+          toastWoke: 'Returned to thread',
+          toastDeleted: 'Thought deleted',
+          toastCoolingSet: 'Move to rest: {n}d',
+          toastPhotoAdded: 'Photo attached',
+          toastPhotoErr: 'Could not read image',
+          toastImportedMd: 'Imported thoughts: {n}',
+          toastImportEmpty: 'File is empty or unreadable',
+          toastExportedMd: 'Exported to .md',
+          toastBackupSaved: 'Full backup (.json) saved',
+          toastRestoredJson: 'Restored thoughts: {n}',
+          toastInvalidJson: 'File is not a valid Nerve backup (.json)',
+          wakeBtn: 'Heat up',
+          openBtn: 'Open',
+          removePhoto: 'Remove',
+          editBtn: 'Edit',
+          moreActions: 'Actions',
+          actPin: 'Pin with anchor',
+          actUnpin: 'Remove anchor',
+          actHeat: 'Heat up (to top)',
+          actPhoto: 'Attach photo',
+          actFocus: 'Focus mode',
+          actRest: 'Move to rest',
+          actWake: 'Return to thread',
+          actDelete: 'Delete thought'
+        },
+        zh: {
+          navSearch: '搜索',
+          navNew: '+ 新建',
+          navSettings: '设置',
+          close: '关闭',
+          save: '保存',
+          done: '完成',
+          backToThread: '返回主线',
+          newModalTitle: '新想法',
+          titlePh: '标题（可选）',
+          bodyPh: '写下想法、清单，或粘贴 NotebookLM 笔记...',
+          addPhoto: '图片',
+          addCheckbox: '待办',
+          searchPh: '搜索活跃与静置的想法...',
+          searchEmpty: '未找到相关内容',
+          restTitle: '静置',
+          restSub: '自然冷却并退出视线的想法',
+          restEmpty: '这里很安静',
+          restNodeLabel: '静置',
+          settingsTitle: '设置',
+          themeLabel: '主题',
+          themeDark: '石墨',
+          themeLight: '纸张',
+          themeSepia: '书页',
+          themeSlate: '夜色',
+          langLabel: '语言',
+          coolingLabel: '静置周期',
+          coolingSub: '无互动后',
+          days7: '7天',
+          days14: '14天',
+          days30: '30天',
+          customDaysPh: '自定义',
+          daysUnit: '天',
+          dataLabel: '数据',
+          communityLabel: '社区',
+          importMd: '导入 .md / .txt',
+          exportMd: '导出 (.md)',
+          backupJson: '完整备份 (.json)',
+          restoreJson: '恢复备份 (.json)',
+          savedStatus: '已保存 · {n}',
+          today: '今天',
+          daysAgo: '{n}天',
+          statePinned: '已锚定',
+          stateHot: '炽热',
+          stateCooling: '冷却中',
+          stateCold: '微凉',
+          stateRested: '已静置',
+          untitled: '无标题',
+          emptyThread: '主线为空 — 记录第一个想法',
+          calmPrompt: '在左侧选择一条想法，或新建笔记',
+          tipHome: '收起笔记并返回顶部',
+          tipPin: '锚定 — 固定顶部且不冷却',
+          tipHeat: '加热 — 回到顶部',
+          tipPhoto: '添加图片',
+          tipEdit: '编辑 (E)',
+          tipFocus: '专注模式 (F)',
+          tipRest: '移入静置',
+          tipWake: '恢复到主线',
+          tipDelete: '删除',
+          confirmDelete: '确认删除？',
+          focusExit: '退出',
+          focusStart: '开始',
+          focusPause: '暂停',
+          focusReset: '重置',
+          focusDone: '专注计时结束',
+          toastCreated: '已添加到主线',
+          toastHeated: '已重新加热',
+          toastPinned: '已锚定到顶部',
+          toastUnpinned: '已取消锚定',
+          toastRested: '已移入静置',
+          toastWoke: '已回到主线',
+          toastDeleted: '已删除',
+          toastCoolingSet: '静置周期：{n}天',
+          toastPhotoAdded: '图片已添加',
+          toastPhotoErr: '无法读取图片',
+          toastImportedMd: '已导入笔记：{n}',
+          toastImportEmpty: '文件为空或无法读取',
+          toastExportedMd: '已导出为 .md',
+          toastBackupSaved: '完整备份 (.json) 已保存',
+          toastRestoredJson: '已恢复笔记：{n}',
+          toastInvalidJson: '无效的 Nerve 备份文件',
+          wakeBtn: '加热',
+          openBtn: '打开',
+          removePhoto: '移除',
+          editBtn: '编辑',
+          moreActions: '更多操作',
+          actPin: '锚定到顶部',
+          actUnpin: '取消锚定',
+          actHeat: '加热（回到顶部）',
+          actPhoto: '添加图片',
+          actFocus: '专注模式',
+          actRest: '移入静置',
+          actWake: '恢复到主线',
+          actDelete: '删除想法'
+        },
+        es: {
+          navSearch: 'Buscar',
+          navNew: '+ Nueva',
+          navSettings: 'Ajustes',
+          close: 'Cerrar',
+          save: 'Guardar',
+          done: 'Listo',
+          backToThread: 'Hilo',
+          newModalTitle: 'Nueva idea',
+          titlePh: 'Título (opcional)',
+          bodyPh: 'Escribe una idea, pasos o pega un resumen de NotebookLM...',
+          addPhoto: 'Foto',
+          addCheckbox: 'Casilla',
+          searchPh: 'Buscar en ideas y en reposo...',
+          searchEmpty: 'Sin resultados',
+          restTitle: 'Reposo',
+          restSub: 'Ideas que se enfriaron y salieron de la vista',
+          restEmpty: 'Todo tranquilo aquí',
+          restNodeLabel: 'Reposo',
+          settingsTitle: 'Ajustes',
+          themeLabel: 'Tema',
+          themeDark: 'Grafito',
+          themeLight: 'Papel',
+          themeSepia: 'Libro',
+          themeSlate: 'Noche',
+          langLabel: 'Idioma',
+          coolingLabel: 'Paso a reposo',
+          coolingSub: 'sin interacción',
+          days7: '7 d',
+          days14: '14 d',
+          days30: '30 d',
+          customDaysPh: 'Otro',
+          daysUnit: 'd',
+          dataLabel: 'Datos',
+          communityLabel: 'Comunidad',
+          importMd: 'Importar .md / .txt',
+          exportMd: 'Exportar (.md)',
+          backupJson: 'Copia (.json)',
+          restoreJson: 'Restaurar (.json)',
+          savedStatus: 'Guardado · {n}',
+          today: 'Hoy',
+          daysAgo: '{n} d',
+          statePinned: 'Anclada',
+          stateHot: 'Activa',
+          stateCooling: 'Enfriando',
+          stateCold: 'Fría',
+          stateRested: 'En reposo',
+          untitled: 'Sin título',
+          emptyThread: 'Hilo vacío — añade tu primera idea',
+          calmPrompt: 'Elige una idea del hilo o crea una nueva',
+          tipHome: 'Ocultar nota y volver al inicio',
+          tipPin: 'Anclar arriba sin que se enfríe',
+          tipHeat: 'Reactivar arriba del hilo',
+          tipPhoto: 'Adjuntar foto',
+          tipEdit: 'Editar (E)',
+          tipFocus: 'Modo enfoque (F)',
+          tipRest: 'Enviar a reposo',
+          tipWake: 'Volver al hilo',
+          tipDelete: 'Eliminar idea',
+          confirmDelete: '¿Eliminar?',
+          focusExit: 'Salir',
+          focusStart: 'Iniciar',
+          focusPause: 'Pausa',
+          focusReset: 'Reiniciar',
+          focusDone: 'Sesión de enfoque terminada',
+          toastCreated: 'Idea añadida al hilo',
+          toastHeated: 'Idea reactivada',
+          toastPinned: 'Anclada arriba',
+          toastUnpinned: 'Ancla quitada',
+          toastRested: 'Enviada a reposo',
+          toastWoke: 'Devuelta al hilo',
+          toastDeleted: 'Idea eliminada',
+          toastCoolingSet: 'Reposo en {n} d',
+          toastPhotoAdded: 'Foto adjuntada',
+          toastPhotoErr: 'No se pudo leer la imagen',
+          toastImportedMd: 'Ideas importadas: {n}',
+          toastImportEmpty: 'Archivo vacío o ilegible',
+          toastExportedMd: 'Exportado a .md',
+          toastBackupSaved: 'Copia completa (.json) guardada',
+          toastRestoredJson: 'Ideas restauradas: {n}',
+          toastInvalidJson: 'No es una copia válida de Nerve (.json)',
+          wakeBtn: 'Reactivar',
+          openBtn: 'Abrir',
+          removePhoto: 'Quitar',
+          editBtn: 'Editar',
+          moreActions: 'Acciones',
+          actPin: 'Fijar con ancla',
+          actUnpin: 'Quitar ancla',
+          actHeat: 'Reactivar (arriba)',
+          actPhoto: 'Adjuntar foto',
+          actFocus: 'Modo enfoque',
+          actRest: 'Enviar a reposo',
+          actWake: 'Volver al hilo',
+          actDelete: 'Eliminar idea'
+        },
+        de: {
+          navSearch: 'Suche',
+          navNew: '+ Neu',
+          navSettings: 'Optionen',
+          close: 'Schließen',
+          save: 'Speichern',
+          done: 'Fertig',
+          backToThread: 'Faden',
+          newModalTitle: 'Neuer Gedanke',
+          titlePh: 'Titel (optional)',
+          bodyPh: 'Gedanke, Checkliste oder NotebookLM-Notiz einfügen...',
+          addPhoto: 'Foto',
+          addCheckbox: 'Aufgabe',
+          searchPh: 'Aktive und ruhende Gedanken suchen...',
+          searchEmpty: 'Nichts gefunden',
+          restTitle: 'Ruhe',
+          restSub: 'Gedanken, die abgekühlt und aus dem Blick gewandert sind',
+          restEmpty: 'Hier ist es ruhig',
+          restNodeLabel: 'Ruhe',
+          settingsTitle: 'Optionen',
+          themeLabel: 'Design',
+          themeDark: 'Graphit',
+          themeLight: 'Papier',
+          themeSepia: 'Buch',
+          themeSlate: 'Nacht',
+          langLabel: 'Sprache',
+          coolingLabel: 'Übergang in Ruhe',
+          coolingSub: 'ohne Interaktion',
+          days7: '7 T.',
+          days14: '14 T.',
+          days30: '30 T.',
+          customDaysPh: 'Eigene',
+          daysUnit: 'T.',
+          dataLabel: 'Daten',
+          communityLabel: 'Community',
+          importMd: 'Import .md / .txt',
+          exportMd: 'Export (.md)',
+          backupJson: 'Backup (.json)',
+          restoreJson: 'Wiederherstellen (.json)',
+          savedStatus: 'Gespeichert · {n}',
+          today: 'Heute',
+          daysAgo: '{n} T.',
+          statePinned: 'Verankert',
+          stateHot: 'Aktiv',
+          stateCooling: 'Kühlt ab',
+          stateCold: 'Kalt',
+          stateRested: 'In Ruhe',
+          untitled: 'Ohne Titel',
+          emptyThread: 'Der Faden ist leer — erster Gedanke',
+          calmPrompt: 'Wähle links einen Gedanken oder erstelle einen neuen',
+          tipHome: 'Notiz ausblenden und nach oben',
+          tipPin: 'Verankern — oben halten, kühlt nicht ab',
+          tipHeat: 'Aufwärmen — zurück nach oben',
+          tipPhoto: 'Foto anhängen',
+          tipEdit: 'Bearbeiten (E)',
+          tipFocus: 'Fokusmodus (F)',
+          tipRest: 'In Ruhe legen',
+          tipWake: 'Zurück in den Faden',
+          tipDelete: 'Gedanken löschen',
+          confirmDelete: 'Löschen?',
+          focusExit: 'Beenden',
+          focusStart: 'Start',
+          focusPause: 'Pause',
+          focusReset: 'Reset',
+          focusDone: 'Fokus-Sitzung beendet',
+          toastCreated: 'Zum Faden hinzugefügt',
+          toastHeated: 'Gedanke aufgewärmt',
+          toastPinned: 'Oben verankert',
+          toastUnpinned: 'Anker gelöst',
+          toastRested: 'In Ruhe gelegt',
+          toastWoke: 'Zurück im Faden',
+          toastDeleted: 'Gedanke gelöscht',
+          toastCoolingSet: 'Ruhe nach {n} Tagen',
+          toastPhotoAdded: 'Foto angehängt',
+          toastPhotoErr: 'Bild konnte nicht geladen werden',
+          toastImportedMd: 'Importierte Gedanken: {n}',
+          toastImportEmpty: 'Datei leer oder unlesbar',
+          toastExportedMd: 'Als .md exportiert',
+          toastBackupSaved: 'Vollständiges Backup (.json) gespeichert',
+          toastRestoredJson: 'Wiederhergestellt: {n}',
+          toastInvalidJson: 'Keine gültige Nerve-Backup-Datei',
+          wakeBtn: 'Aufwärmen',
+          openBtn: 'Öffnen',
+          removePhoto: 'Entfernen',
+          editBtn: 'Bearbeiten',
+          moreActions: 'Aktionen',
+          actPin: 'Verankern',
+          actUnpin: 'Anker lösen',
+          actHeat: 'Aufwärmen (nach oben)',
+          actPhoto: 'Foto anhängen',
+          actFocus: 'Fokusmodus',
+          actRest: 'In Ruhe legen',
+          actWake: 'Zurück in Faden',
+          actDelete: 'Gedanken löschen'
+        }
+      };
+
+      function detectBrowserLang() {
+        const raw = (navigator.language || 'ru').toLowerCase().slice(0, 2);
+        return VALID_LANGS.includes(raw) ? raw : 'en';
+      }
+
+      // ==========================================
+      // 2. СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+      // ==========================================
+      let state = {
+        notes: [],
+        theme: 'dark',
+        lang: detectBrowserLang(),
+        coolingDays: 14
+      };
+
+      let selectedNoteId = null;
+      let isEditMode = false;
+      let isFocusMode = false;
+      let isNoteMenuOpen = false;
+      let lastRenderedNoteId = null;
+      let pendingDeleteNoteId = null;
+      let deleteConfirmTimer = null;
+      let newModalImages = [];
+      let toastTimer = null;
+
+      // Таймер режима фокуса
+      let focusMinutes = 25;
+      let focusRemainingSec = 25 * 60;
+      let focusInterval = null;
+      let focusRunning = false;
+
+      function t(key, vars = {}) {
+        const dict = I18N[state.lang] || I18N.ru;
+        let str = dict[key] !== undefined ? dict[key] : (I18N.ru[key] || key);
+        Object.keys(vars).forEach(k => {
+          str = str.replace(new RegExp('\\{' + k + '\\}', 'g'), String(vars[k]));
+        });
+        return str;
+      }
+
+      function createStarterNotes(lang) {
+        const now = Date.now();
+        const templates = {
+          ru: [
+            {
+              id: 'starter-1',
+              title: 'Добро пожаловать в Nerve',
+              body: 'Это локальные заметки без папок и бесконечной свалки. Все мысли живут на **вертикальной нити**: свежие светятся наверху, а те, к которым ты давно не возвращался, постепенно остывают и тихо уходят в **Покой** внизу списка.\n\n## Что можно попробовать прямо сейчас\n- [x] Тапнуть по этому чекбоксу прямо в режиме чтения\n- [ ] Нажать **Править** сверху (или `E` на ПК), чтобы отредактировать текст\n- [ ] Открыть меню **`···`** сверху — там живут **Якорь** (закрепить мысль наверху), **Фокус** с тихим таймером, **Фото** и **Покой**\n- [ ] Прикрепить скриншот через меню **`···`** или `Ctrl+V`\n\n> Всё хранится локально прямо в браузере. В **Настройках** можно выбрать тему, свой срок остывания или скачать бэкап в `.json`. Можешь удалить эту инструкцию через **`···`** и нажать **+ Новая** (`N`).',
+              createdAt: now,
+              lastHeatedAt: now,
+              isPinned: false,
+              isRested: false,
+              images: []
+            }
+          ],
+          en: [
+            {
+              id: 'starter-1',
+              title: 'Welcome to Nerve',
+              body: 'Local notes without folders or endless clutter. Every thought lives on the **vertical thread**: fresh ones glow at the top, while untouched ones gradually cool down and step into **Rest** at the bottom.\n\n## Things to try right away\n- [x] Tap this checkbox directly while reading\n- [ ] Tap **Edit** above (or press `E` on desktop) to change the text\n- [ ] Open the **`···`** menu above for **Anchor** (pin to top), **Focus mode** with a quiet timer, **Photo**, and **Rest**\n- [ ] Attach screenshots via **`···`** or `Ctrl+V`\n\n> Everything stays locally in your browser. Open **Settings** to switch themes, set a custom cooling period, or export a `.json` backup. Feel free to delete this note via **`···`** and hit **+ New** (`N`).',
+              createdAt: now,
+              lastHeatedAt: now,
+              isPinned: false,
+              isRested: false,
+              images: []
+            }
+          ],
+          zh: [
+            {
+              id: 'starter-1',
+              title: '欢迎使用 Nerve',
+              body: '没有文件夹与杂乱堆积的本地笔记。所有想法都排列在**垂直主线**上：新的想法在顶部发光，久未触碰的想法会自然冷却，并安静地移入底部的**静置**。\n\n## 现在就可以试试\n- [x] 在阅读模式下直接点击此待办框\n- [ ] 点击顶部的**编辑**按钮（或按 `E`）修改内容\n- [ ] 打开顶部 **`···`** 菜单：使用**锚定**、带安静计时器的**专注模式**、**图片**或**静置**\n- [ ] 通过 **`···`** 菜单或 `Ctrl+V` 粘贴截图\n\n> 所有数据仅保存在本地浏览器中。在**设置**里可切换主题、自定义静置天数或导出 `.json` 备份。随时可以通过 **`···`** 删除本说明并点击 **+ 新建**（`N`）。',
+              createdAt: now,
+              lastHeatedAt: now,
+              isPinned: false,
+              isRested: false,
+              images: []
+            }
+          ],
+          es: [
+            {
+              id: 'starter-1',
+              title: 'Bienvenido a Nerve',
+              body: 'Notas locales sin carpetas ni desorden infinito. Cada idea vive en el **hilo vertical**: las recientes brillan arriba y las que no tocas se enfrían poco a poco hasta pasar a **Reposo** abajo del todo.\n\n## Qué probar ahora mismo\n- [x] Toca esta casilla directamente en modo lectura\n- [ ] Pulsa **Editar** arriba (o la tecla `E` en PC) para modificar el texto\n- [ ] Abre el menú **`···`** arriba para usar **Ancla**, **Modo enfoque**, **Foto** o **Reposo**\n- [ ] Añade imágenes desde **`···`** o con `Ctrl+V`\n\n> Todo se guarda localmente en tu navegador. En **Ajustes** puedes cambiar el tema, definir tus días de reposo o guardar una copia `.json`. Puedes borrar esta guía desde **`···`** y pulsar **+ Nueva** (`N`).',
+              createdAt: now,
+              lastHeatedAt: now,
+              isPinned: false,
+              isRested: false,
+              images: []
+            }
+          ],
+          de: [
+            {
+              id: 'starter-1',
+              title: 'Willkommen bei Nerve',
+              body: 'Lokale Notizen ohne Ordner und endloses Chaos. Alle Gedanken leben auf dem **vertikalen Faden**: frische leuchten oben, unberührte kühlen sanft ab und wandern unten in die **Ruhe**.\n\n## Gleich ausprobieren\n- [x] Direkt im Lesemodus auf diese Aufgabe tippen\n- [ ] Oben **Bearbeiten** antippen (oder `E` am PC drücken), um Text zu ändern\n- [ ] Das Menü **`···`** oben öffnen für **Anker**, **Fokusmodus** mit Timer, **Foto** und **Ruhe**\n- [ ] Bilder über **`···`** oder `Ctrl+V` anhängen\n\n> Alles bleibt lokal in deinem Browser. Unter **Optionen** kannst du Design, Ruhezeit oder ein `.json`-Backup wählen. Du kannst diese Anleitung über **`···`** löschen und **+ Neu** (`N`) starten.',
+              createdAt: now,
+              lastHeatedAt: now,
+              isPinned: false,
+              isRested: false,
+              images: []
+            }
+          ]
+        };
+        return templates[lang] || templates.ru;
+      }
+
+      // ==========================================
+      // 3. DOM-ССЫЛКИ
+      // ==========================================
+      const timelineViewport = document.getElementById('timelineViewport');
+      const nodesRow = document.getElementById('nodesRow');
+      const readingPane = document.getElementById('readingPane');
+      const logoHomeBtn = document.getElementById('logoHomeBtn');
+
+      const openSearchBtn = document.getElementById('openSearchBtn');
+      const openNewBtn = document.getElementById('openNewBtn');
+      const openSettingsBtn = document.getElementById('openSettingsBtn');
+
+      const newModal = document.getElementById('newModal');
+      const newModalCard = document.getElementById('newModalCard');
+      const closeNewBtn = document.getElementById('closeNewBtn');
+      const newTitleInput = document.getElementById('newTitleInput');
+      const newBodyInput = document.getElementById('newBodyInput');
+      const newImagesPreview = document.getElementById('newImagesPreview');
+      const newAddPhotoBtn = document.getElementById('newAddPhotoBtn');
+      const newAddCheckBtn = document.getElementById('newAddCheckBtn');
+      const saveNewBtn = document.getElementById('saveNewBtn');
+
+      const searchModal = document.getElementById('searchModal');
+      const closeSearchBtn = document.getElementById('closeSearchBtn');
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+
+      const restModal = document.getElementById('restModal');
+      const closeRestBtn = document.getElementById('closeRestBtn');
+      const restList = document.getElementById('restList');
+
+      const settingsModal = document.getElementById('settingsModal');
+      const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+      const themeSwatches = document.getElementById('themeSwatches');
+      const langOptions = document.getElementById('langOptions');
+      const coolingOptions = document.getElementById('coolingOptions');
+      const customCoolingWrap = document.getElementById('customCoolingWrap');
+      const customCoolingInput = document.getElementById('customCoolingInput');
+      const settingsImportMdBtn = document.getElementById('settingsImportMdBtn');
+      const settingsExportMdBtn = document.getElementById('settingsExportMdBtn');
+      const settingsBackupJsonBtn = document.getElementById('settingsBackupJsonBtn');
+      const settingsRestoreJsonBtn = document.getElementById('settingsRestoreJsonBtn');
+      const storageStatusText = document.getElementById('storageStatusText');
+
+      const lightboxModal = document.getElementById('lightboxModal');
+      const lightboxImg = document.getElementById('lightboxImg');
+      const closeLightboxBtn = document.getElementById('closeLightboxBtn');
+
+      const noteImageInput = document.getElementById('noteImageInput');
+      const newImageInput = document.getElementById('newImageInput');
+      const mdFileInput = document.getElementById('mdFileInput');
+      const jsonFileInput = document.getElementById('jsonFileInput');
+      const toastEl = document.getElementById('toastEl');
+
+      // ==========================================
+      // 4. ДВОЙНОЕ ХРАНИЛИЩЕ (INDEXEDDB + LOCALSTORAGE)
+      // ==========================================
+      function openDB() {
+        return new Promise((resolve, reject) => {
+          if (!('indexedDB' in window)) {
+            reject(new Error('IndexedDB unavailable'));
+            return;
+          }
+          const req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(DB_STORE)) {
+              db.createObjectStore(DB_STORE);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      async function idbGet(key) {
+        try {
+          const db = await openDB();
+          return await new Promise((resolve, reject) => {
+            const tx = db.transaction(DB_STORE, 'readonly');
+            const store = tx.objectStore(DB_STORE);
+            const req = store.get(key);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          });
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function idbSet(key, val) {
+        try {
+          const db = await openDB();
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(DB_STORE, 'readwrite');
+            const store = tx.objectStore(DB_STORE);
+            const req = store.put(val, key);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+          });
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function normalizeNotes(arr) {
+        if (!Array.isArray(arr)) return [];
+        const now = Date.now();
+        return arr
+          .filter(item => item && typeof item === 'object')
+          .map(item => ({
+            id: typeof item.id === 'string' && item.id ? item.id : createId(),
+            title: typeof item.title === 'string' ? item.title : '',
+            body: typeof item.body === 'string' ? item.body : '',
+            createdAt: typeof item.createdAt === 'number' && Number.isFinite(item.createdAt) ? item.createdAt : now,
+            lastHeatedAt: typeof item.lastHeatedAt === 'number' && Number.isFinite(item.lastHeatedAt)
+              ? item.lastHeatedAt
+              : (typeof item.createdAt === 'number' ? item.createdAt : now),
+            isPinned: Boolean(item.isPinned),
+            isRested: Boolean(item.isRested),
+            images: Array.isArray(item.images) ? item.images.filter(s => typeof s === 'string') : []
+          }));
+      }
+
+      async function loadState() {
+        let cachedTheme = null;
+        let cachedLang = null;
+        try {
+          cachedTheme = localStorage.getItem(LS_THEME_KEY);
+          cachedLang = localStorage.getItem(LS_LANG_KEY);
+        } catch (e) {}
+
+        let saved = await idbGet(DB_STATE_KEY);
+        if (!saved) {
+          try {
+            const rawLs = localStorage.getItem(LS_BACKUP_KEY);
+            if (rawLs) saved = JSON.parse(rawLs);
+          } catch (e) {}
+        }
+
+        if (saved && Array.isArray(saved.notes)) {
+          state.lang = VALID_LANGS.includes(saved.lang)
+            ? saved.lang
+            : (VALID_LANGS.includes(cachedLang) ? cachedLang : detectBrowserLang());
+          state.notes = normalizeNotes(saved.notes);
+          state.theme = VALID_THEMES.includes(saved.theme)
+            ? saved.theme
+            : (VALID_THEMES.includes(cachedTheme) ? cachedTheme : 'dark');
+          state.coolingDays = normalizeCoolingDays(saved.coolingDays) || 14;
+        } else {
+          state.lang = VALID_LANGS.includes(cachedLang) ? cachedLang : detectBrowserLang();
+          state.theme = VALID_THEMES.includes(cachedTheme) ? cachedTheme : 'dark';
+          state.coolingDays = 14;
+          state.notes = createStarterNotes(state.lang);
+          await saveState();
+        }
+
+        applyTheme(state.theme, false);
+        updateSettingsUI();
+      }
+
+      async function saveState() {
+        const snapshot = {
+          notes: state.notes,
+          theme: state.theme,
+          lang: state.lang,
+          coolingDays: state.coolingDays,
+          updatedAt: Date.now()
+        };
+
+        await idbSet(DB_STATE_KEY, snapshot);
+
+        // Лёгкая страховка в localStorage (тексты и настройки, без переполнения квоты)
+        try {
+          localStorage.setItem(LS_THEME_KEY, state.theme);
+          localStorage.setItem(LS_LANG_KEY, state.lang);
+          const lightNotes = state.notes.map(n => ({
+            id: n.id,
+            title: n.title,
+            body: n.body,
+            createdAt: n.createdAt,
+            lastHeatedAt: n.lastHeatedAt,
+            isPinned: n.isPinned,
+            isRested: n.isRested,
+            images: n.images.length <= 2 ? n.images : []
+          }));
+          localStorage.setItem(LS_BACKUP_KEY, JSON.stringify({
+            notes: lightNotes,
+            theme: state.theme,
+            lang: state.lang,
+            coolingDays: state.coolingDays
+          }));
+        } catch (e) {
+          // Если картинки заняли много места, сохраняем в localStorage хотя бы чистый текст
+          try {
+            const textOnly = state.notes.map(n => ({ ...n, images: [] }));
+            localStorage.setItem(LS_BACKUP_KEY, JSON.stringify({
+              notes: textOnly,
+              theme: state.theme,
+              lang: state.lang,
+              coolingDays: state.coolingDays
+            }));
+          } catch (e2) {}
+        }
+
+        updateStorageStatusUI();
+      }
+
+      function updateStorageStatusUI() {
+        if (storageStatusText) {
+          storageStatusText.textContent = t('savedStatus', { n: state.notes.length });
+        }
+      }
+
+      // ==========================================
+      // 5. ТЕМЫ И ЯЗЫКИ
+      // ==========================================
+      function applyTheme(themeName, persist = true) {
+        if (!VALID_THEMES.includes(themeName)) return;
+        state.theme = themeName;
+        const root = document.documentElement;
+        VALID_THEMES.forEach(th => root.classList.remove('theme-' + th));
+        root.classList.add('theme-' + themeName);
+
+        const isLight = themeName === 'light' || themeName === 'sepia';
+        const metaScheme = document.getElementById('metaColorScheme');
+        const metaBg = document.getElementById('metaThemeColor');
+        if (metaScheme) metaScheme.setAttribute('content', isLight ? 'only light' : 'dark');
+        if (metaBg) metaBg.setAttribute('content', THEME_META_BG[themeName] || '#0A0B0D');
+
+        updateSettingsUI();
+        if (persist) saveState();
+      }
+
+      function applyLang(langCode, persist = true) {
+        if (!VALID_LANGS.includes(langCode)) return;
+        const prevLang = state.lang;
+        state.lang = langCode;
+
+        // Если в базе только нетронутая стартовая инструкция — переводим её на новый язык
+        const isOnlyStarters = state.notes.length === 1 &&
+          state.notes[0].id === 'starter-1';
+        if (isOnlyStarters && prevLang !== langCode) {
+          const prevTpl = createStarterNotes(prevLang)[0];
+          const cur = state.notes[0];
+          if (prevTpl && prevTpl.title === cur.title && prevTpl.body === cur.body) {
+            const nextTpl = createStarterNotes(langCode)[0];
+            state.notes[0] = { ...cur, title: nextTpl.title, body: nextTpl.body };
+          }
+        }
+
+        applyStaticTranslations();
+        updateSettingsUI();
+        renderAll(false);
+        if (restModal.classList.contains('is-open')) renderRestList();
+        if (searchModal.classList.contains('is-open')) renderSearchResults();
+        if (persist) saveState();
+      }
+
+      function applyStaticTranslations() {
+        document.documentElement.lang = state.lang;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          el.textContent = t(el.dataset.i18n);
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+          el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder));
+        });
+        if (logoHomeBtn) {
+          logoHomeBtn.title = t('tipHome');
+          logoHomeBtn.setAttribute('aria-label', t('tipHome'));
+        }
+        updateStorageStatusUI();
+      }
+
+      function updateSettingsUI() {
+        themeSwatches.querySelectorAll('[data-theme]').forEach(btn => {
+          btn.classList.toggle('is-selected', btn.dataset.theme === state.theme);
+        });
+        langOptions.querySelectorAll('[data-lang]').forEach(btn => {
+          btn.classList.toggle('is-selected', btn.dataset.lang === state.lang);
+        });
+        const isPreset = PRESET_COOLING_DAYS.includes(state.coolingDays);
+        coolingOptions.querySelectorAll('[data-cooling]').forEach(btn => {
+          btn.classList.toggle('is-selected', Number(btn.dataset.cooling) === state.coolingDays);
+        });
+        if (customCoolingWrap && customCoolingInput) {
+          customCoolingWrap.classList.toggle('is-selected', !isPreset);
+          if (document.activeElement !== customCoolingInput) {
+            customCoolingInput.value = isPreset ? '' : String(state.coolingDays);
+          }
+        }
+      }
+
+      // ==========================================
+      // 6. ТЕПЛОВАЯ ЛОГИКА ОСТЫВАНИЯ
+      // ==========================================
+      function createId() {
+        return 'n_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+      }
+
+      function getAgeDays(note) {
+        const ref = typeof note.lastHeatedAt === 'number' ? note.lastHeatedAt : note.createdAt;
+        return Math.max(0, (Date.now() - ref) / DAY_MS);
+      }
+
+      function isNoteArchived(note) {
+        if (note.isPinned) return false;
+        if (note.isRested) return true;
+        return getAgeDays(note) >= state.coolingDays;
+      }
+
+      function getThermalState(note) {
+        if (note.isPinned) return 'hot';
+        if (isNoteArchived(note)) return 'archived';
+        const age = getAgeDays(note);
+        const hotLimit = state.coolingDays <= 4
+          ? state.coolingDays * 0.25
+          : Math.max(1, Math.round(state.coolingDays * 0.2));
+        const coolingLimit = state.coolingDays <= 4
+          ? state.coolingDays * 0.6
+          : Math.max(hotLimit + 1, Math.round(state.coolingDays * 0.55));
+        if (age <= hotLimit) return 'hot';
+        if (age <= coolingLimit) return 'cooling';
+        return 'cold';
+      }
+
+      function formatAge(note) {
+        const days = Math.floor(getAgeDays(note));
+        if (days < 1) return t('today');
+        return t('daysAgo', { n: days });
+      }
+
+      function getPartitionedNotes() {
+        const active = [];
+        const rested = [];
+        state.notes.forEach(note => {
+          if (isNoteArchived(note)) rested.push(note);
+          else active.push(note);
+        });
+
+        active.sort((a, b) => {
+          if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+          return (b.lastHeatedAt || b.createdAt) - (a.lastHeatedAt || a.createdAt);
+        });
+        rested.sort((a, b) => (b.lastHeatedAt || b.createdAt) - (a.lastHeatedAt || a.createdAt));
+
+        return { active, rested };
+      }
+
+      // ==========================================
+      // 7. MARKDOWN, NOTEBOOKLM СНОСКИ И ЧЕКБОКСЫ
+      // ==========================================
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function stripMarkdown(str) {
+        return String(str || '')
+          .replace(/```[\s\S]*?```/g, ' ')
+          .replace(/`([^`]+)`/g, '$1')
+          .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+          .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+          .replace(/^\s*#{1,6}\s+/gm, '')
+          .replace(/^\s*>\s?/gm, '')
+          .replace(/^\s*[-*+]\s+\[[ xX]\]\s+/gm, '')
+          .replace(/^\s*[-*+]\s+/gm, '')
+          .replace(/^\s*\d+\.\s+/gm, '')
+          .replace(/(\*\*|__|\*|_|~~)/g, '')
+          .replace(/\[\d+(?:\s*,\s*\d+)*\]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function deriveTitle(rawTitle, body) {
+        const clean = (rawTitle || '').trim();
+        if (clean) return clean;
+        const lines = String(body || '').split('\n');
+        for (const line of lines) {
+          const stripped = stripMarkdown(line);
+          if (stripped) {
+            return stripped.length > 68 ? stripped.slice(0, 68).trim() + '…' : stripped;
+          }
+        }
+        return t('untitled');
+      }
+
+      function getPreviewLine(note) {
+        const lines = String(note.body || '').split('\n');
+        const titleClean = stripMarkdown(note.title || '').toLowerCase();
+        for (const line of lines) {
+          const stripped = stripMarkdown(line);
+          if (!stripped) continue;
+          if (!note.title && stripped.toLowerCase() === deriveTitle('', note.body).toLowerCase()) continue;
+          if (titleClean && stripped.toLowerCase() === titleClean) continue;
+          return stripped.length > 76 ? stripped.slice(0, 76).trim() + '…' : stripped;
+        }
+        return '';
+      }
+
+      function getCheckboxStats(body) {
+        const lines = String(body || '').split('\n');
+        let total = 0;
+        let done = 0;
+        lines.forEach(line => {
+          const m = line.match(/^\s*[-*+]\s+\[([ xX])\]\s+/);
+          if (m) {
+            total += 1;
+            if (m[1].toLowerCase() === 'x') done += 1;
+          }
+        });
+        return { total, done };
+      }
+
+      function formatInlineMarkdown(raw) {
+        const codeTokens = [];
+        let s = String(raw);
+
+        // Защищаем inline code
+        s = s.replace(/`([^`]+)`/g, (_, code) => {
+          const idx = codeTokens.length;
+          codeTokens.push('<code>' + escapeHtml(code) + '</code>');
+          return '%%CODE_' + idx + '%%';
+        });
+
+        s = escapeHtml(s);
+
+        // Markdown-ссылки [label](url)
+        s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, url) => {
+          return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+        });
+
+        // Сноски NotebookLM вида [1] или [1, 2, 5]
+        s = s.replace(/\[(\d+(?:\s*,\s*\d+)*)\]/g, '<sup class="nlm-cite">[$1]</sup>');
+
+        // Автоссылки https://... (не внутри уже созданного тега <a>)
+        s = s.replace(/(^|[\s(>])(https?:\/\/[^\s<]+)/g, (match, prefix, url) => {
+          const cleanUrl = url.replace(/[.,!?;:)\]]+$/, '');
+          const trailing = url.slice(cleanUrl.length);
+          return prefix + '<a href="' + cleanUrl + '" target="_blank" rel="noopener noreferrer">' + cleanUrl + '</a>' + trailing;
+        });
+
+        // Жирный, курсив, зачёркнутый
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+        s = s.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+        s = s.replace(/(^|[^\*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+
+        // Возвращаем inline code
+        s = s.replace(/%%CODE_(\d+)%%/g, (_, idx) => codeTokens[Number(idx)] || '');
+        return s;
+      }
+
+      function renderNoteBodyHtml(rawBody) {
+        const lines = String(rawBody || '').replace(/\r\n/g, '\n').split('\n');
+        const out = [];
+        let inCode = false;
+        let codeLines = [];
+        let listType = null; // 'ul' | 'ol' | 'check'
+
+        function closeList() {
+          if (!listType) return;
+          if (listType === 'ol') out.push('</ol>');
+          else out.push('</ul>');
+          listType = null;
+        }
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+
+          // Блоки кода ```
+          if (line.trim().startsWith('```')) {
+            closeList();
+            if (!inCode) {
+              inCode = true;
+              codeLines = [];
+            } else {
+              out.push('<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>');
+              inCode = false;
+            }
+            continue;
+          }
+
+          if (inCode) {
+            codeLines.push(line);
+            continue;
+          }
+
+          // Пустая строка
+          if (!line.trim()) {
+            closeList();
+            continue;
+          }
+
+          // Разделитель ---
+          if (/^\s*([-*_])\1{2,}\s*$/.test(line)) {
+            closeList();
+            out.push('<hr />');
+            continue;
+          }
+
+          // Заголовки #..####
+          const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
+          if (headingMatch) {
+            closeList();
+            const level = headingMatch[1].length;
+            out.push('<h' + level + '>' + formatInlineMarkdown(headingMatch[2].trim()) + '</h' + level + '>');
+            continue;
+          }
+
+          // Цитата >
+          const quoteMatch = line.match(/^\s*>\s?(.*)$/);
+          if (quoteMatch) {
+            closeList();
+            out.push('<blockquote>' + formatInlineMarkdown(quoteMatch[1]) + '</blockquote>');
+            continue;
+          }
+
+          // Интерактивный чекбокс - [ ] / - [x]
+          const checkMatch = line.match(/^\s*[-*+]\s+\[([ xX])\]\s+(.*)$/);
+          if (checkMatch) {
+            if (listType !== 'check') {
+              closeList();
+              out.push('<ul class="md-checklist">');
+              listType = 'check';
+            }
+            const checked = checkMatch[1].toLowerCase() === 'x';
+            out.push(
+              '<li class="md-check-item' + (checked ? ' is-checked' : '') + '" data-check-line="' + i + '" role="checkbox" aria-checked="' + checked + '">' +
+                '<span class="md-check-box">' +
+                  (checked ? '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>' : '') +
+                '</span>' +
+                '<span class="md-check-text">' + formatInlineMarkdown(checkMatch[2]) + '</span>' +
+              '</li>'
+            );
+            continue;
+          }
+
+          // Маркированный список
+          const ulMatch = line.match(/^\s*[-*+]\s+(.+)$/);
+          if (ulMatch) {
+            if (listType !== 'ul') {
+              closeList();
+              out.push('<ul>');
+              listType = 'ul';
+            }
+            out.push('<li>' + formatInlineMarkdown(ulMatch[1]) + '</li>');
+            continue;
+          }
+
+          // Нумерованный список
+          const olMatch = line.match(/^\s*\d+\.\s+(.+)$/);
+          if (olMatch) {
+            if (listType !== 'ol') {
+              closeList();
+              out.push('<ol>');
+              listType = 'ol';
+            }
+            out.push('<li>' + formatInlineMarkdown(olMatch[1]) + '</li>');
+            continue;
+          }
+
+          // Обычный абзац
+          closeList();
+          out.push('<p>' + formatInlineMarkdown(line) + '</p>');
+        }
+
+        if (inCode) {
+          out.push('<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>');
+        }
+        closeList();
+
+        return out.join('');
+      }
+
+      function toggleCheckboxInNote(noteId, lineIndex, checkItemEl) {
+        const note = state.notes.find(n => n.id === noteId);
+        if (!note) return;
+        const lines = String(note.body || '').replace(/\r\n/g, '\n').split('\n');
+        if (lineIndex < 0 || lineIndex >= lines.length) return;
+        const line = lines[lineIndex];
+        const m = line.match(/^(\s*[-*+]\s+\[)([ xX])(\]\s+.*)$/);
+        if (!m) return;
+        const isNowChecked = m[2].toLowerCase() !== 'x';
+        const nextMark = isNowChecked ? 'x' : ' ';
+        lines[lineIndex] = m[1] + nextMark + m[3];
+        note.body = lines.join('\n');
+        note.lastHeatedAt = Date.now();
+        saveState();
+
+        // Обновляем чекбокс на месте без перерисовки листа — скролл никогда не прыгает
+        if (checkItemEl) {
+          checkItemEl.classList.toggle('is-checked', isNowChecked);
+          checkItemEl.setAttribute('aria-checked', String(isNowChecked));
+          const box = checkItemEl.querySelector('.md-check-box');
+          if (box) {
+            box.innerHTML = isNowChecked
+              ? '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>'
+              : '';
+          }
+          const statusLabel = (note.isPinned ? t('statePinned') : t('stateHot')) + ' · ' + formatAge(note);
+          readingPane.querySelectorAll('[data-status-label]').forEach(el => {
+            el.textContent = statusLabel;
+          });
+          renderTimeline();
+        } else {
+          renderAll(false);
+        }
+      }
+
+      // ==========================================
+      // 8. СЖАТИЕ ИЗОБРАЖЕНИЙ И ПОМОЩНИКИ ФАЙЛОВ
+      // ==========================================
+      function sanitizeFilename(name) {
+        return String(name || 'nerve')
+          .replace(/[\\/:*?"<>|]+/g, '')
+          .replace(/\s+/g, '_')
+          .slice(0, 60) || 'nerve';
+      }
+
+      function compressImageFileToWebP(file) {
+        return new Promise((resolve, reject) => {
+          if (!file || !file.type.startsWith('image/')) {
+            reject(new Error('Not an image'));
+            return;
+          }
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error('Read error'));
+          reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error('Decode error'));
+            img.onload = () => {
+              const maxSide = 1440;
+              let w = img.naturalWidth || img.width;
+              let h = img.naturalHeight || img.height;
+              if (w > maxSide || h > maxSide) {
+                const ratio = Math.min(maxSide / w, maxSide / h);
+                w = Math.max(1, Math.round(w * ratio));
+                h = Math.max(1, Math.round(h * ratio));
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+
+              let out = '';
+              try {
+                out = canvas.toDataURL('image/webp', 0.82);
+                if (!out.startsWith('data:image/webp')) {
+                  out = canvas.toDataURL('image/jpeg', 0.84);
+                }
+              } catch (e) {
+                out = canvas.toDataURL('image/jpeg', 0.84);
+              }
+              resolve(out);
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function triggerDownload(filename, content, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      // ==========================================
+      // 9. РЕНДЕР ВЕРТИКАЛЬНОЙ НИТИ (СЛЕВА)
+      // ==========================================
+      function renderTimeline() {
+        const { active, rested } = getPartitionedNotes();
+        const parts = [];
+
+        if (active.length === 0) {
+          parts.push(
+            '<div class="py-8 pl-7 pr-3 text-[13px] t-ink-40 leading-relaxed">' +
+              escapeHtml(t('emptyThread')) +
+            '</div>'
+          );
+        } else {
+          active.forEach(note => {
+            const thermal = getThermalState(note);
+            const selected = note.id === selectedNoteId;
+            const title = deriveTitle(note.title, note.body);
+            const preview = getPreviewLine(note);
+            const ageLabel = formatAge(note);
+            const checks = getCheckboxStats(note.body);
+            const hasImg = note.images && note.images.length > 0;
+
+            const metaBits = [];
+            if (note.isPinned) {
+              metaBits.push(
+                '<span class="inline-flex items-center gap-1">' +
+                  '<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                    '<circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="21"/><path d="M5 13a7 7 0 0 0 14 0"/>' +
+                  '</svg>' +
+                '</span>'
+              );
+            }
+            metaBits.push('<span>' + escapeHtml(ageLabel) + '</span>');
+            if (checks.total > 0) {
+              metaBits.push('<span class="tabular-nums">' + checks.done + '/' + checks.total + '</span>');
+            }
+            if (hasImg) {
+              metaBits.push('<span>' + note.images.length + ' ' + escapeHtml(t('addPhoto').toLowerCase()) + '</span>');
+            }
+
+            parts.push(
+              '<button type="button" data-note-id="' + escapeHtml(note.id) + '" class="thread-node thermal-' + thermal + (selected ? ' is-selected' : '') + '">' +
+                '<span class="node-dot"></span>' +
+                '<div class="node-title text-[14px] font-medium truncate leading-snug">' + escapeHtml(title) + '</div>' +
+                (preview ? '<div class="node-preview text-[12.5px] truncate mt-0.5 leading-snug">' + escapeHtml(preview) + '</div>' : '') +
+                '<div class="node-meta flex items-center gap-2.5 text-[11px] mt-1.5">' + metaBits.join('<span>·</span>') + '</div>' +
+              '</button>'
+            );
+          });
+        }
+
+        // Узел «Покой · N» внизу нити
+        parts.push(
+          '<button id="openRestNodeBtn" type="button" class="rest-node">' +
+            '<span class="rest-dot"></span>' +
+            '<span class="text-[12.5px]">' + escapeHtml(t('restNodeLabel')) + '</span>' +
+            '<span class="text-[11.5px] tabular-nums t-ink-32">' + rested.length + '</span>' +
+          '</button>'
+        );
+
+        nodesRow.innerHTML = parts.join('');
+      }
+
+      // ==========================================
+      // 10. РЕНДЕР ПРАВОГО ЛИСТА (ЧТЕНИЕ / РЕДАКТОР / ФОКУС)
+      // ==========================================
+      function formatTimerDisplay(totalSec) {
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }
+
+      function renderReadingPane(animate = true) {
+        const prevScrollEl = document.getElementById('readingScroll');
+        const shouldPreserveScroll = !animate && prevScrollEl && lastRenderedNoteId === selectedNoteId;
+        const savedScrollTop = shouldPreserveScroll ? prevScrollEl.scrollTop : 0;
+
+        const note = selectedNoteId ? state.notes.find(n => n.id === selectedNoteId) : null;
+
+        if (!note) {
+          lastRenderedNoteId = null;
+          isNoteMenuOpen = false;
+          readingPane.innerHTML =
+            '<div class="flex-1 flex flex-col items-center justify-center p-8 text-center select-none">' +
+              '<svg class="w-8 h-8 t-ink-32 mb-4" viewBox="0 0 36 36" fill="none">' +
+                '<line x1="11" y1="11" x2="25" y2="25" stroke="currentColor" stroke-opacity="0.38" stroke-width="2" stroke-linecap="round"/>' +
+                '<circle cx="11" cy="11" r="4.4" fill="currentColor" fill-opacity="0.55"/>' +
+                '<circle cx="25" cy="25" r="4" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8"/>' +
+              '</svg>' +
+              '<p class="text-[13.5px] t-ink-40 max-w-[260px] leading-relaxed m-0">' + escapeHtml(t('calmPrompt')) + '</p>' +
+            '</div>';
+          return;
+        }
+
+        const archived = isNoteArchived(note);
+        const thermal = getThermalState(note);
+        let statusText = t('stateHot');
+        if (note.isPinned) statusText = t('statePinned');
+        else if (archived) statusText = t('stateRested');
+        else if (thermal === 'cooling') statusText = t('stateCooling');
+        else if (thermal === 'cold') statusText = t('stateCold');
+
+        const titleText = deriveTitle(note.title, note.body);
+        const ageText = formatAge(note);
+        const statusCombined = statusText + ' · ' + ageText;
+        const isConfirmingDel = pendingDeleteNoteId === note.id;
+
+        // Верхняя панель режима фокуса
+        const focusBarHtml =
+          '<div class="focus-bar hidden items-center justify-between px-5 sm:px-10 py-4 border-b t-border-faint shrink-0">' +
+            '<div class="flex items-center gap-2 sm:gap-3">' +
+              '<span id="focusTimerDisplay" class="text-[14px] font-medium tabular-nums t-hot min-w-[48px]">' + formatTimerDisplay(focusRemainingSec) + '</span>' +
+              '<button type="button" data-focus-action="toggle" class="header-pill-btn text-[12px] py-1 px-3">' +
+                escapeHtml(focusRunning ? t('focusPause') : t('focusStart')) +
+              '</button>' +
+              '<button type="button" data-focus-action="reset" class="header-ghost-btn text-[12px]">' +
+                escapeHtml(t('focusReset')) +
+              '</button>' +
+              '<div class="hidden sm:flex items-center gap-1 ml-1">' +
+                [15, 25, 45].map(m =>
+                  '<button type="button" data-focus-min="' + m + '" class="pill-choice-btn text-[11.5px] py-1 px-2.5' + (focusMinutes === m ? ' is-selected' : '') + '">' + m + 'm</button>'
+                ).join('') +
+              '</div>' +
+            '</div>' +
+            '<button type="button" data-focus-action="exit" class="header-ghost-btn text-[12.5px]">' +
+              escapeHtml(t('focusExit')) + ' <span class="kbd-hint hidden sm:inline">Esc</span>' +
+            '</button>' +
+          '</div>';
+
+        // Выпадающее меню действий с текстовыми подписями (···)
+        const actionsMenuHtml =
+          '<div class="note-menu-wrap">' +
+            '<button type="button" data-action="toggle-menu" class="icon-action-btn' + (isNoteMenuOpen ? ' is-active' : '') + '" title="' + escapeHtml(t('moreActions')) + '" aria-label="' + escapeHtml(t('moreActions')) + '" aria-expanded="' + (isNoteMenuOpen ? 'true' : 'false') + '">' +
+              '<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor">' +
+                '<circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/>' +
+              '</svg>' +
+            '</button>' +
+            '<div id="noteMenuPopover" class="note-menu-popover' + (isNoteMenuOpen ? ' is-open' : '') + '">' +
+              '<button type="button" data-action="toggle-pin" class="note-menu-item' + (note.isPinned ? ' is-active' : '') + '">' +
+                '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="21"/><path d="M5 13a7 7 0 0 0 14 0"/></svg>' +
+                '<span>' + escapeHtml(note.isPinned ? t('actUnpin') : t('actPin')) + '</span>' +
+              '</button>' +
+              '<button type="button" data-action="heat" class="note-menu-item">' +
+                '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c.5 4.2-3 6.2-3 10a5 5 0 0 0 10 0c0-3.2-2.2-5.5-3.2-7-.4 1.6-1.5 2.4-2.3 2.5.4-2-.4-4.1-1.5-5.5z"/></svg>' +
+                '<span>' + escapeHtml(t('actHeat')) + '</span>' +
+              '</button>' +
+              '<button type="button" data-action="add-photo" class="note-menu-item">' +
+                '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>' +
+                '<span>' + escapeHtml(t('actPhoto')) + '</span>' +
+              '</button>' +
+              '<button type="button" data-action="focus" class="note-menu-item">' +
+                '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/></svg>' +
+                '<span>' + escapeHtml(t('actFocus')) + '</span>' +
+              '</button>' +
+              '<button type="button" data-action="toggle-rest" class="note-menu-item">' +
+                '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>' +
+                '<span>' + escapeHtml(archived ? t('actWake') : t('actRest')) + '</span>' +
+              '</button>' +
+              '<div class="note-menu-divider"></div>' +
+              '<button type="button" data-action="delete" class="note-menu-item is-danger">' +
+                '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>' +
+                '<span>' + escapeHtml(isConfirmingDel ? t('confirmDelete') : t('actDelete')) + '</span>' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+
+        // Чистая интуитивная панель заметки (без ребуса из 7 иконок)
+        const normalToolbarHtml =
+          '<div class="normal-note-toolbar flex items-center justify-between gap-2 px-4 sm:px-10 py-3 border-b t-border-faint shrink-0">' +
+            '<div class="flex items-center gap-2 min-w-0">' +
+              (!isEditMode
+                ? '<button type="button" data-action="mobile-back" class="md:hidden header-ghost-btn -ml-2 px-2.5 text-[13.5px] t-hot">' +
+                    '<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+                    '<span>' + escapeHtml(t('backToThread')) + '</span>' +
+                  '</button>'
+                : ''
+              ) +
+              '<span data-status-label class="hidden md:inline text-[12px] t-ink-40 truncate">' + escapeHtml(statusCombined) + '</span>' +
+            '</div>' +
+
+            '<div class="flex items-center gap-1.5 shrink-0">' +
+              (isEditMode
+                ? '<button type="button" data-action="edit-add-check" class="header-ghost-btn text-[12.5px]">+ ' + escapeHtml(t('addCheckbox')) + '</button>' +
+                  '<button type="button" data-action="add-photo" class="icon-action-btn" title="' + escapeHtml(t('tipPhoto')) + '">' +
+                    '<svg class="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>' +
+                  '</button>' +
+                  '<button type="button" data-action="finish-edit" class="header-pill-btn text-[12.5px] py-1.5 px-3.5 ml-1">' + escapeHtml(t('done')) + '</button>'
+                : // Панель чтения: Править + Фокус (на ПК) + меню действий (···) с подписями
+                  '<button type="button" data-action="focus" class="hidden sm:inline-flex header-ghost-btn text-[12.5px]" title="' + escapeHtml(t('tipFocus')) + '">' +
+                    '<svg class="w-[15px] h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/></svg>' +
+                    '<span>' + escapeHtml(t('actFocus')) + '</span>' +
+                  '</button>' +
+                  '<button type="button" data-action="start-edit" class="header-pill-btn text-[12.5px] py-1.5 px-3.5" title="' + escapeHtml(t('tipEdit')) + '">' +
+                    '<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>' +
+                    '<span>' + escapeHtml(t('editBtn')) + '</span>' +
+                  '</button>' +
+                  actionsMenuHtml
+              ) +
+            '</div>' +
+          '</div>';
+
+        // Галерея изображений заметки
+        let imagesHtml = '';
+        if (note.images && note.images.length > 0) {
+          imagesHtml =
+            '<div class="mt-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">' +
+              note.images.map((src, idx) =>
+                '<div class="relative group rounded-2xl overflow-hidden border t-border-faint t-surface">' +
+                  '<img src="' + src + '" alt="" data-lightbox-src="1" class="w-full max-h-[360px] object-cover block cursor-zoom-in" />' +
+                  (isEditMode
+                    ? '<button type="button" data-remove-img="' + idx + '" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[11.5px] bg-black/70 text-white border border-white/15 cursor-pointer">' + escapeHtml(t('removePhoto')) + '</button>'
+                    : ''
+                  ) +
+                '</div>'
+              ).join('') +
+            '</div>';
+        }
+
+        // Контент: редактор или чистый Markdown
+        let contentHtml = '';
+        if (isEditMode) {
+          contentHtml =
+            '<div class="w-full max-w-[700px] mx-auto px-5 sm:px-10 py-6 sm:py-10 flex flex-col gap-4">' +
+              '<input id="editTitleInput" type="text" value="' + escapeHtml(note.title) + '" placeholder="' + escapeHtml(t('titlePh')) + '" class="w-full bg-transparent border-0 text-[24px] sm:text-[28px] font-medium tracking-tight t-hot placeholder:text-[color:var(--ink-32)] focus:outline-none" />' +
+              '<textarea id="editBodyInput" placeholder="' + escapeHtml(t('bodyPh')) + '" class="w-full min-h-[52vh] bg-transparent border-0 resize-none text-[15.5px] leading-[1.72] t-ink-84 placeholder:text-[color:var(--ink-32)] focus:outline-none">' + escapeHtml(note.body) + '</textarea>' +
+              imagesHtml +
+            '</div>';
+        } else {
+          contentHtml =
+            '<article id="noteReadArticle" class="w-full max-w-[700px] mx-auto px-5 sm:px-10 py-6 sm:py-11' + (animate ? ' reading-fade-in' : '') + '">' +
+              '<div data-status-label class="md:hidden text-[12px] t-ink-40 mb-2">' + escapeHtml(statusCombined) + '</div>' +
+              '<h1 class="text-[24px] sm:text-[28px] font-medium tracking-tight leading-snug t-hot m-0 mb-5">' + escapeHtml(titleText) + '</h1>' +
+              '<div class="md-body">' + renderNoteBodyHtml(note.body) + '</div>' +
+              imagesHtml +
+            '</article>';
+        }
+
+        readingPane.innerHTML =
+          focusBarHtml +
+          normalToolbarHtml +
+          '<div id="readingScroll" class="flex-1 min-h-0 overflow-y-auto quiet-scroll">' +
+            contentHtml +
+          '</div>';
+
+        lastRenderedNoteId = selectedNoteId;
+
+        if (shouldPreserveScroll) {
+          const nextScrollEl = document.getElementById('readingScroll');
+          if (nextScrollEl) nextScrollEl.scrollTop = savedScrollTop;
+        }
+
+        if (isEditMode) {
+          const titleEl = document.getElementById('editTitleInput');
+          const bodyEl = document.getElementById('editBodyInput');
+          if (bodyEl) {
+            autoResizeTextarea(bodyEl);
+            bodyEl.focus();
+            bodyEl.setSelectionRange(bodyEl.value.length, bodyEl.value.length);
+            bodyEl.addEventListener('input', () => {
+              autoResizeTextarea(bodyEl);
+              syncCurrentNoteEdits();
+            });
+          }
+          if (titleEl) {
+            titleEl.addEventListener('input', syncCurrentNoteEdits);
+          }
+        }
+      }
+
+      function autoResizeTextarea(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.max(320, el.scrollHeight + 24) + 'px';
+      }
+
+      function syncCurrentNoteEdits() {
+        const note = state.notes.find(n => n.id === selectedNoteId);
+        if (!note) return;
+        const titleEl = document.getElementById('editTitleInput');
+        const bodyEl = document.getElementById('editBodyInput');
+        if (titleEl) note.title = titleEl.value;
+        if (bodyEl) note.body = bodyEl.value;
+        note.lastHeatedAt = Date.now();
+        saveState();
+        renderTimeline();
+      }
+
+      function renderAll(animateReading = true) {
+        if (selectedNoteId && !state.notes.some(n => n.id === selectedNoteId)) {
+          const { active } = getPartitionedNotes();
+          selectedNoteId = active.length > 0 ? active[0].id : (state.notes[0] ? state.notes[0].id : null);
+        }
+        renderTimeline();
+        renderReadingPane(animateReading);
+      }
+
+      // ==========================================
+      // 11. ДЕЙСТВИЯ: ВОЗВРАТ, РЕДАКТОР, ФОКУС, ПОКОЙ
+      // ==========================================
+      function clearDeleteConfirm() {
+        pendingDeleteNoteId = null;
+        if (deleteConfirmTimer) {
+          clearTimeout(deleteConfirmTimer);
+          deleteConfirmTimer = null;
+        }
+      }
+
+      function closeAllModals() {
+        isNoteMenuOpen = false;
+        newModal.classList.remove('is-open');
+        searchModal.classList.remove('is-open');
+        restModal.classList.remove('is-open');
+        settingsModal.classList.remove('is-open');
+        lightboxModal.classList.remove('is-open');
+      }
+
+      function closeNoteMenuDom() {
+        if (!isNoteMenuOpen) return;
+        isNoteMenuOpen = false;
+        clearDeleteConfirm();
+        const pop = document.getElementById('noteMenuPopover');
+        if (pop) pop.classList.remove('is-open');
+        const btn = readingPane.querySelector('[data-action="toggle-menu"]');
+        if (btn) {
+          btn.classList.remove('is-active');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      function selectNote(noteId, animate = true) {
+        if (isEditMode) isEditMode = false;
+        isNoteMenuOpen = false;
+        clearDeleteConfirm();
+        selectedNoteId = noteId;
+        document.body.classList.add('mobile-reading-open');
+        renderTimeline();
+        renderReadingPane(animate);
+      }
+
+      function returnToHome() {
+        if (isFocusMode) exitFocusMode();
+        if (isEditMode) isEditMode = false;
+        isNoteMenuOpen = false;
+        closeAllModals();
+        clearDeleteConfirm();
+        selectedNoteId = null;
+        document.body.classList.remove('mobile-reading-open');
+        renderTimeline();
+        renderReadingPane(false);
+        timelineViewport.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function enterFocusMode() {
+        if (!selectedNoteId) return;
+        if (isEditMode) isEditMode = false;
+        isNoteMenuOpen = false;
+        isFocusMode = true;
+        document.body.classList.add('focus-mode');
+        renderReadingPane(false);
+      }
+
+      function exitFocusMode() {
+        isFocusMode = false;
+        stopFocusTimer();
+        document.body.classList.remove('focus-mode');
+        renderReadingPane(false);
+      }
+
+      function stopFocusTimer() {
+        focusRunning = false;
+        if (focusInterval) {
+          clearInterval(focusInterval);
+          focusInterval = null;
+        }
+      }
+
+      function toggleFocusTimer() {
+        if (focusRunning) {
+          stopFocusTimer();
+        } else {
+          if (focusRemainingSec <= 0) focusRemainingSec = focusMinutes * 60;
+          focusRunning = true;
+          focusInterval = setInterval(() => {
+            focusRemainingSec = Math.max(0, focusRemainingSec - 1);
+            const disp = document.getElementById('focusTimerDisplay');
+            if (disp) disp.textContent = formatTimerDisplay(focusRemainingSec);
+            if (focusRemainingSec <= 0) {
+              stopFocusTimer();
+              showToast(t('focusDone'));
+              renderReadingPane(false);
+            }
+          }, 1000);
+        }
+        renderReadingPane(false);
+      }
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('is-visible');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove('is-visible');
+        }, 2400);
+      }
+
+      // ==========================================
+      // 12. МОДАЛКИ: НОВАЯ МЫСЛЬ, ПОИСК, ПОКОЙ, НАСТРОЙКИ
+      // ==========================================
+      function openNewModal() {
+        closeAllModals();
+        newTitleInput.value = '';
+        newBodyInput.value = '';
+        newModalImages = [];
+        renderNewImagesPreview();
+        newModal.classList.add('is-open');
+        setTimeout(() => newBodyInput.focus(), 40);
+      }
+
+      function renderNewImagesPreview() {
+        newImagesPreview.innerHTML = newModalImages.map((src, idx) =>
+          '<div class="relative w-20 h-20 rounded-xl overflow-hidden border t-border-subtle">' +
+            '<img src="' + src + '" alt="" class="w-full h-full object-cover" />' +
+            '<button type="button" data-new-remove-img="' + idx + '" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/75 text-white text-[11px] flex items-center justify-center border-0 cursor-pointer">×</button>' +
+          '</div>'
+        ).join('');
+      }
+
+      function saveNewThought() {
+        const rawTitle = newTitleInput.value.trim();
+        const rawBody = newBodyInput.value.trim();
+        if (!rawTitle && !rawBody && newModalImages.length === 0) {
+          closeAllModals();
+          return;
+        }
+        const now = Date.now();
+        const note = {
+          id: createId(),
+          title: rawTitle,
+          body: rawBody,
+          createdAt: now,
+          lastHeatedAt: now,
+          isPinned: false,
+          isRested: false,
+          images: newModalImages.slice()
+        };
+        state.notes.unshift(note);
+        closeAllModals();
+        saveState();
+        selectNote(note.id, true);
+        timelineViewport.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast(t('toastCreated'));
+      }
+
+      function openSearchModal() {
+        closeAllModals();
+        searchInput.value = '';
+        searchModal.classList.add('is-open');
+        renderSearchResults();
+        setTimeout(() => searchInput.focus(), 40);
+      }
+
+      function renderSearchResults() {
+        const q = searchInput.value.trim().toLowerCase();
+        const list = state.notes.filter(note => {
+          if (!q) return true;
+          const hay = (note.title + ' ' + stripMarkdown(note.body)).toLowerCase();
+          return hay.includes(q);
+        });
+
+        list.sort((a, b) => (b.lastHeatedAt || b.createdAt) - (a.lastHeatedAt || a.createdAt));
+
+        if (list.length === 0) {
+          searchResults.innerHTML = '<div class="py-10 text-center text-[13px] t-ink-40">' + escapeHtml(t('searchEmpty')) + '</div>';
+          return;
+        }
+
+        searchResults.innerHTML = list.slice(0, 40).map(note => {
+          const archived = isNoteArchived(note);
+          const title = deriveTitle(note.title, note.body);
+          const preview = getPreviewLine(note);
+          return (
+            '<button type="button" data-search-id="' + escapeHtml(note.id) + '" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-transparent border-0 cursor-pointer hover:bg-[color:var(--hover-bg)] transition-colors">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<span class="text-[14px] font-medium t-hot truncate">' + escapeHtml(title) + '</span>' +
+                '<span class="text-[11px] t-ink-32 shrink-0">' + escapeHtml(archived ? t('stateRested') : formatAge(note)) + '</span>' +
+              '</div>' +
+              (preview ? '<div class="text-[12.5px] t-ink-40 truncate mt-0.5">' + escapeHtml(preview) + '</div>' : '') +
+            '</button>'
+          );
+        }).join('');
+      }
+
+      function openRestModal() {
+        closeAllModals();
+        renderRestList();
+        restModal.classList.add('is-open');
+      }
+
+      function renderRestList() {
+        const { rested } = getPartitionedNotes();
+        if (rested.length === 0) {
+          restList.innerHTML = '<div class="py-12 text-center text-[13px] t-ink-40">' + escapeHtml(t('restEmpty')) + '</div>';
+          return;
+        }
+        restList.innerHTML = rested.map(note => {
+          const title = deriveTitle(note.title, note.body);
+          const preview = getPreviewLine(note);
+          return (
+            '<div class="flex items-center justify-between gap-3 px-3.5 py-3 rounded-xl border t-border-faint hover:bg-[color:var(--hover-bg)] transition-colors">' +
+              '<div class="min-w-0 flex-1 cursor-pointer" data-rest-open="' + escapeHtml(note.id) + '">' +
+                '<div class="text-[14px] font-medium t-ink-84 truncate">' + escapeHtml(title) + '</div>' +
+                (preview ? '<div class="text-[12px] t-ink-40 truncate mt-0.5">' + escapeHtml(preview) + '</div>' : '') +
+                '<div class="text-[11px] t-ink-32 mt-1">' + escapeHtml(formatAge(note)) + '</div>' +
+              '</div>' +
+              '<button type="button" data-rest-wake="' + escapeHtml(note.id) + '" class="header-pill-btn text-[12px] py-1.5 px-3 shrink-0">' +
+                escapeHtml(t('wakeBtn')) +
+              '</button>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function openSettingsModal() {
+        closeAllModals();
+        updateSettingsUI();
+        updateStorageStatusUI();
+        settingsModal.classList.add('is-open');
+      }
+
+      // ==========================================
+      // 13. ИМПОРТ / ЭКСПОРТ (.MD И ПОЛНЫЙ .JSON)
+      // ==========================================
+      async function handleMdImportFiles(fileList) {
+        const files = Array.from(fileList || []);
+        if (files.length === 0) return;
+
+        let importedCount = 0;
+        const now = Date.now();
+
+        for (const file of files) {
+          try {
+            const text = (await file.text()).replace(/^\uFEFF/, '').trim();
+            if (!text) continue;
+
+            // Проверяем, не экспорт ли это из Nerve (несколько заметок через ---\n\n# )
+            const multiChunks = text.split(/\n{2,}={3,}\n{2,}/);
+            if (multiChunks.length > 1) {
+              multiChunks.forEach((chunk, idx) => {
+                const trimmed = chunk.trim();
+                if (!trimmed) return;
+                const lines = trimmed.split('\n');
+                let title = '';
+                let body = trimmed;
+                const h1 = lines[0].match(/^#\s+(.+)$/);
+                if (h1) {
+                  title = h1[1].trim();
+                  body = lines.slice(1).join('\n').trim();
+                }
+                state.notes.unshift({
+                  id: createId(),
+                  title,
+                  body,
+                  createdAt: now - idx * 1000,
+                  lastHeatedAt: now - idx * 1000,
+                  isPinned: false,
+                  isRested: false,
+                  images: []
+                });
+                importedCount += 1;
+              });
+            } else {
+              const lines = text.split('\n');
+              let title = file.name.replace(/\.(md|markdown|txt)(\.txt)?$/i, '').trim();
+              let body = text;
+              const h1 = lines[0].match(/^#\s+(.+)$/);
+              if (h1) {
+                title = h1[1].trim();
+                body = lines.slice(1).join('\n').trim();
+              }
+              state.notes.unshift({
+                id: createId(),
+                title,
+                body,
+                createdAt: now,
+                lastHeatedAt: now,
+                isPinned: false,
+                isRested: false,
+                images: []
+              });
+              importedCount += 1;
+            }
+          } catch (err) {
+            // пропускаем битый файл
+          }
+        }
+
+        if (importedCount > 0) {
+          await saveState();
+          selectedNoteId = state.notes[0].id;
+          renderAll(true);
+          closeAllModals();
+          showToast(t('toastImportedMd', { n: importedCount }));
+        } else {
+          showToast(t('toastImportEmpty'));
+        }
+      }
+
+      function exportMarkdownBase() {
+        const chunks = state.notes.map(note => {
+          const title = deriveTitle(note.title, note.body);
+          return '# ' + title + '\n\n' + (note.body || '').trim();
+        });
+        const content = chunks.join('\n\n===\n\n') + '\n';
+        const stamp = new Date().toISOString().slice(0, 10);
+        triggerDownload(sanitizeFilename('nerve_' + stamp) + '.md', content, 'text/markdown;charset=utf-8');
+        showToast(t('toastExportedMd'));
+      }
+
+      function exportJsonBackup() {
+        const payload = {
+          app: 'nerve',
+          exportedAt: Date.now(),
+          theme: state.theme,
+          lang: state.lang,
+          coolingDays: state.coolingDays,
+          notes: state.notes
+        };
+        const stamp = new Date().toISOString().slice(0, 10);
+        triggerDownload(
+          sanitizeFilename('nerve_backup_' + stamp) + '.json',
+          JSON.stringify(payload, null, 2),
+          'application/json;charset=utf-8'
+        );
+        showToast(t('toastBackupSaved'));
+      }
+
+      async function handleJsonRestoreFile(file) {
+        if (!file) return;
+        try {
+          const raw = await file.text();
+          const parsed = JSON.parse(raw);
+          if (!parsed || !Array.isArray(parsed.notes)) {
+            showToast(t('toastInvalidJson'));
+            return;
+          }
+          const incoming = normalizeNotes(parsed.notes);
+          const existingMap = new Map(state.notes.map(n => [n.id, n]));
+          incoming.forEach(n => existingMap.set(n.id, n));
+          state.notes = Array.from(existingMap.values());
+
+          if (VALID_THEMES.includes(parsed.theme)) applyTheme(parsed.theme, false);
+          const importedCooling = normalizeCoolingDays(parsed.coolingDays);
+          if (importedCooling) state.coolingDays = importedCooling;
+          if (VALID_LANGS.includes(parsed.lang)) applyLang(parsed.lang, false);
+
+          await saveState();
+          updateSettingsUI();
+          const { active } = getPartitionedNotes();
+          if (!selectedNoteId && active.length > 0) selectedNoteId = active[0].id;
+          renderAll(true);
+          closeAllModals();
+          showToast(t('toastRestoredJson', { n: incoming.length }));
+        } catch (err) {
+          showToast(t('toastInvalidJson'));
+        }
+      }
+
+      // ==========================================
+      // 14. ПРИКРЕПЛЕНИЕ ФОТО (КНОПКА / CTRL+V / DROP)
+      // ==========================================
+      async function attachImagesToCurrentNote(files) {
+        const note = state.notes.find(n => n.id === selectedNoteId);
+        if (!note) return;
+        let added = 0;
+        for (const f of Array.from(files || [])) {
+          if (!f.type || !f.type.startsWith('image/')) continue;
+          try {
+            const webp = await compressImageFileToWebP(f);
+            note.images.push(webp);
+            added += 1;
+          } catch (e) {}
+        }
+        if (added > 0) {
+          note.lastHeatedAt = Date.now();
+          await saveState();
+          renderAll(false);
+          showToast(t('toastPhotoAdded'));
+        } else {
+          showToast(t('toastPhotoErr'));
+        }
+      }
+
+      async function attachImagesToNewModal(files) {
+        let added = 0;
+        for (const f of Array.from(files || [])) {
+          if (!f.type || !f.type.startsWith('image/')) continue;
+          try {
+            const webp = await compressImageFileToWebP(f);
+            newModalImages.push(webp);
+            added += 1;
+          } catch (e) {}
+        }
+        if (added > 0) {
+          renderNewImagesPreview();
+          showToast(t('toastPhotoAdded'));
+        } else {
+          showToast(t('toastPhotoErr'));
+        }
+      }
+
+      // ==========================================
+      // 15. ОБРАБОТЧИКИ СОБЫТИЙ
+      // ==========================================
+
+      // Клик по узлам левой нити и узлу «Покой»
+      nodesRow.addEventListener('click', (e) => {
+        const restBtn = e.target.closest('#openRestNodeBtn');
+        if (restBtn) {
+          openRestModal();
+          return;
+        }
+        const nodeBtn = e.target.closest('[data-note-id]');
+        if (!nodeBtn) return;
+        selectNote(nodeBtn.dataset.noteId, true);
+      });
+
+      // Клики внутри правого листа (действия, чекбоксы, фото, фокус)
+      readingPane.addEventListener('click', (e) => {
+        // Лайтбокс изображения
+        const imgEl = e.target.closest('[data-lightbox-src]');
+        if (imgEl && !e.target.closest('[data-remove-img]')) {
+          lightboxImg.src = imgEl.getAttribute('src');
+          lightboxModal.classList.add('is-open');
+          return;
+        }
+
+        // Удаление фото в редакторе
+        const remImgBtn = e.target.closest('[data-remove-img]');
+        if (remImgBtn) {
+          const note = state.notes.find(n => n.id === selectedNoteId);
+          const idx = Number(remImgBtn.dataset.removeImg);
+          if (note && Number.isInteger(idx)) {
+            note.images.splice(idx, 1);
+            saveState();
+            renderAll(false);
+          }
+          return;
+        }
+
+        // Интерактивный чекбокс (не перехватываем клик по ссылке внутри строки)
+        const checkItem = e.target.closest('[data-check-line]');
+        if (checkItem && !e.target.closest('a')) {
+          const lineIdx = Number(checkItem.dataset.checkLine);
+          toggleCheckboxInNote(selectedNoteId, lineIdx, checkItem);
+          return;
+        }
+
+        // Кнопки панели Фокуса
+        const focusMinBtn = e.target.closest('[data-focus-min]');
+        if (focusMinBtn) {
+          stopFocusTimer();
+          focusMinutes = Number(focusMinBtn.dataset.focusMin);
+          focusRemainingSec = focusMinutes * 60;
+          renderReadingPane(false);
+          return;
+        }
+
+        const focusActBtn = e.target.closest('[data-focus-action]');
+        if (focusActBtn) {
+          const act = focusActBtn.dataset.focusAction;
+          if (act === 'toggle') toggleFocusTimer();
+          else if (act === 'reset') {
+            stopFocusTimer();
+            focusRemainingSec = focusMinutes * 60;
+            renderReadingPane(false);
+          } else if (act === 'exit') {
+            exitFocusMode();
+          }
+          return;
+        }
+
+        // Основные кнопки панели заметки
+        const actBtn = e.target.closest('[data-action]');
+        if (!actBtn) return;
+        const action = actBtn.dataset.action;
+        const note = state.notes.find(n => n.id === selectedNoteId);
+
+        if (action === 'mobile-back') {
+          if (isEditMode) isEditMode = false;
+          isNoteMenuOpen = false;
+          document.body.classList.remove('mobile-reading-open');
+          return;
+        }
+        if (!note) return;
+
+        if (action === 'toggle-menu') {
+          isNoteMenuOpen = !isNoteMenuOpen;
+          if (!isNoteMenuOpen) clearDeleteConfirm();
+          const pop = document.getElementById('noteMenuPopover');
+          if (pop) {
+            pop.classList.toggle('is-open', isNoteMenuOpen);
+            actBtn.classList.toggle('is-active', isNoteMenuOpen);
+            actBtn.setAttribute('aria-expanded', isNoteMenuOpen ? 'true' : 'false');
+          } else {
+            renderReadingPane(false);
+          }
+          return;
+        }
+
+        if (action === 'toggle-pin') {
+          isNoteMenuOpen = false;
+          note.isPinned = !note.isPinned;
+          if (note.isPinned) {
+            note.isRested = false;
+            note.lastHeatedAt = Date.now();
+          }
+          saveState();
+          renderAll(false);
+          showToast(t(note.isPinned ? 'toastPinned' : 'toastUnpinned'));
+        } else if (action === 'heat') {
+          isNoteMenuOpen = false;
+          note.isRested = false;
+          note.lastHeatedAt = Date.now();
+          saveState();
+          renderAll(false);
+          showToast(t('toastHeated'));
+        } else if (action === 'add-photo') {
+          isNoteMenuOpen = false;
+          closeNoteMenuDom();
+          noteImageInput.value = '';
+          noteImageInput.click();
+        } else if (action === 'start-edit') {
+          isNoteMenuOpen = false;
+          clearDeleteConfirm();
+          isEditMode = true;
+          renderReadingPane(false);
+        } else if (action === 'finish-edit') {
+          isEditMode = false;
+          saveState();
+          renderAll(false);
+        } else if (action === 'edit-add-check') {
+          const bodyEl = document.getElementById('editBodyInput');
+          if (bodyEl) {
+            const prefix = bodyEl.value && !bodyEl.value.endsWith('\n') ? '\n' : '';
+            bodyEl.value += prefix + '- [ ] ';
+            bodyEl.focus();
+            autoResizeTextarea(bodyEl);
+            syncCurrentNoteEdits();
+          }
+        } else if (action === 'focus') {
+          enterFocusMode();
+        } else if (action === 'toggle-rest') {
+          isNoteMenuOpen = false;
+          const archived = isNoteArchived(note);
+          if (archived) {
+            note.isRested = false;
+            note.lastHeatedAt = Date.now();
+            showToast(t('toastWoke'));
+          } else {
+            note.isPinned = false;
+            note.isRested = true;
+            showToast(t('toastRested'));
+            const { active } = getPartitionedNotes();
+            selectedNoteId = active.length > 0 ? active[0].id : null;
+            if (!selectedNoteId) document.body.classList.remove('mobile-reading-open');
+          }
+          saveState();
+          renderAll(true);
+        } else if (action === 'delete') {
+          if (pendingDeleteNoteId === note.id) {
+            isNoteMenuOpen = false;
+            clearDeleteConfirm();
+            state.notes = state.notes.filter(n => n.id !== note.id);
+            const { active } = getPartitionedNotes();
+            selectedNoteId = active.length > 0 ? active[0].id : null;
+            if (!selectedNoteId) document.body.classList.remove('mobile-reading-open');
+            saveState();
+            renderAll(true);
+            showToast(t('toastDeleted'));
+          } else {
+            pendingDeleteNoteId = note.id;
+            isNoteMenuOpen = true;
+            renderReadingPane(false);
+            deleteConfirmTimer = setTimeout(() => {
+              pendingDeleteNoteId = null;
+              renderReadingPane(false);
+            }, 3500);
+          }
+        }
+      });
+
+      // Закрытие меню действий (···) при клике мимо
+      document.addEventListener('click', (e) => {
+        if (!isNoteMenuOpen) return;
+        if (!e.target.closest('.note-menu-wrap')) {
+          closeNoteMenuDom();
+        }
+      });
+
+      // Двойной клик на ПК по тексту заметки — осознанный вход в редактор
+      readingPane.addEventListener('dblclick', (e) => {
+        if (window.innerWidth < 768 || isEditMode || isFocusMode) return;
+        if (e.target.closest('a') || e.target.closest('[data-check-line]') || e.target.closest('button') || e.target.closest('img')) return;
+        if (e.target.closest('#noteReadArticle')) {
+          isEditMode = true;
+          renderReadingPane(false);
+        }
+      });
+
+      // Шапка и модалка новой мысли
+      if (logoHomeBtn) logoHomeBtn.addEventListener('click', returnToHome);
+      openNewBtn.addEventListener('click', openNewModal);
+      closeNewBtn.addEventListener('click', closeAllModals);
+      newModal.addEventListener('click', (e) => { if (e.target === newModal) closeAllModals(); });
+      saveNewBtn.addEventListener('click', saveNewThought);
+
+      newAddPhotoBtn.addEventListener('click', () => {
+        newImageInput.value = '';
+        newImageInput.click();
+      });
+
+      newAddCheckBtn.addEventListener('click', () => {
+        const prefix = newBodyInput.value && !newBodyInput.value.endsWith('\n') ? '\n' : '';
+        newBodyInput.value += prefix + '- [ ] ';
+        newBodyInput.focus();
+      });
+
+      newImagesPreview.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-new-remove-img]');
+        if (!btn) return;
+        newModalImages.splice(Number(btn.dataset.newRemoveImg), 1);
+        renderNewImagesPreview();
+      });
+
+      // Поиск
+      openSearchBtn.addEventListener('click', openSearchModal);
+      closeSearchBtn.addEventListener('click', closeAllModals);
+      searchModal.addEventListener('click', (e) => { if (e.target === searchModal) closeAllModals(); });
+      searchInput.addEventListener('input', renderSearchResults);
+      searchResults.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-search-id]');
+        if (!btn) return;
+        closeAllModals();
+        selectNote(btn.dataset.searchId, true);
+      });
+
+      // Покой
+      closeRestBtn.addEventListener('click', closeAllModals);
+      restModal.addEventListener('click', (e) => { if (e.target === restModal) closeAllModals(); });
+      restList.addEventListener('click', (e) => {
+        const wakeBtn = e.target.closest('[data-rest-wake]');
+        if (wakeBtn) {
+          const note = state.notes.find(n => n.id === wakeBtn.dataset.restWake);
+          if (note) {
+            note.isRested = false;
+            note.lastHeatedAt = Date.now();
+            saveState();
+            closeAllModals();
+            selectNote(note.id, true);
+            showToast(t('toastWoke'));
+          }
+          return;
+        }
+        const openEl = e.target.closest('[data-rest-open]');
+        if (openEl) {
+          closeAllModals();
+          selectNote(openEl.dataset.restOpen, true);
+        }
+      });
+
+      // Настройки
+      openSettingsBtn.addEventListener('click', openSettingsModal);
+      closeSettingsBtn.addEventListener('click', closeAllModals);
+      settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeAllModals(); });
+
+      themeSwatches.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-theme]');
+        if (!btn) return;
+        applyTheme(btn.dataset.theme, true);
+      });
+
+      langOptions.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-lang]');
+        if (!btn) return;
+        applyLang(btn.dataset.lang, true);
+      });
+
+      function applyCoolingDays(rawVal, showNotice = true) {
+        const days = normalizeCoolingDays(rawVal);
+        if (!days) {
+          updateSettingsUI();
+          return;
+        }
+        const changed = state.coolingDays !== days;
+        state.coolingDays = days;
+        updateSettingsUI();
+        saveState();
+        renderAll(false);
+        if (showNotice && changed) {
+          showToast(t('toastCoolingSet', { n: days }));
+        }
+      }
+
+      coolingOptions.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-cooling]');
+        if (!btn) return;
+        applyCoolingDays(btn.dataset.cooling, true);
+      });
+
+      if (customCoolingInput) {
+        customCoolingInput.addEventListener('change', () => {
+          applyCoolingDays(customCoolingInput.value, true);
+        });
+        customCoolingInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            applyCoolingDays(customCoolingInput.value, true);
+            customCoolingInput.blur();
+          }
+        });
+      }
+
+      settingsImportMdBtn.addEventListener('click', () => {
+        mdFileInput.value = '';
+        mdFileInput.click();
+      });
+      settingsExportMdBtn.addEventListener('click', exportMarkdownBase);
+      settingsBackupJsonBtn.addEventListener('click', exportJsonBackup);
+      settingsRestoreJsonBtn.addEventListener('click', () => {
+        jsonFileInput.value = '';
+        jsonFileInput.click();
+      });
+
+      // Файловые инпуты
+      noteImageInput.addEventListener('change', () => {
+        if (noteImageInput.files && noteImageInput.files.length > 0) {
+          attachImagesToCurrentNote(noteImageInput.files);
+        }
+      });
+      newImageInput.addEventListener('change', () => {
+        if (newImageInput.files && newImageInput.files.length > 0) {
+          attachImagesToNewModal(newImageInput.files);
+        }
+      });
+      mdFileInput.addEventListener('change', () => {
+        if (mdFileInput.files && mdFileInput.files.length > 0) {
+          handleMdImportFiles(mdFileInput.files);
+        }
+      });
+      jsonFileInput.addEventListener('change', () => {
+        if (jsonFileInput.files && jsonFileInput.files[0]) {
+          handleJsonRestoreFile(jsonFileInput.files[0]);
+        }
+      });
+
+      // Лайтбокс
+      closeLightboxBtn.addEventListener('click', closeAllModals);
+      lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeAllModals(); });
+
+      // Вставка фото через Ctrl+V
+      document.addEventListener('paste', (e) => {
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        const imgFiles = [];
+        for (const item of items) {
+          if (item.type && item.type.startsWith('image/')) {
+            const f = item.getAsFile();
+            if (f) imgFiles.push(f);
+          }
+        }
+        if (imgFiles.length === 0) return;
+        e.preventDefault();
+        if (newModal.classList.contains('is-open')) {
+          attachImagesToNewModal(imgFiles);
+        } else if (selectedNoteId) {
+          attachImagesToCurrentNote(imgFiles);
+        }
+      });
+
+      // Drag & Drop изображений в заметку или в окно новой мысли
+      [readingPane, newModalCard].forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('drop-active');
+        });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drop-active'));
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('drop-active');
+          const files = e.dataTransfer && e.dataTransfer.files;
+          if (!files || files.length === 0) return;
+          if (zone === newModalCard) attachImagesToNewModal(files);
+          else if (selectedNoteId) attachImagesToCurrentNote(files);
+        });
+      });
+
+      // Горячие клавиши на ПК
+      document.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        const isTyping = tag === 'input' || tag === 'textarea';
+
+        // Ctrl/Cmd + Enter сохраняет новую мысль или завершает редактирование
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          if (newModal.classList.contains('is-open')) {
+            e.preventDefault();
+            saveNewThought();
+            return;
+          }
+          if (isEditMode) {
+            e.preventDefault();
+            isEditMode = false;
+            saveState();
+            renderAll(false);
+            return;
+          }
+        }
+
+        if (e.key === 'Escape') {
+          if (isNoteMenuOpen) {
+            closeNoteMenuDom();
+            return;
+          }
+          if (lightboxModal.classList.contains('is-open') ||
+              newModal.classList.contains('is-open') ||
+              searchModal.classList.contains('is-open') ||
+              restModal.classList.contains('is-open') ||
+              settingsModal.classList.contains('is-open')) {
+            closeAllModals();
+            return;
+          }
+          if (isFocusMode) {
+            exitFocusMode();
+            return;
+          }
+          if (isEditMode) {
+            isEditMode = false;
+            saveState();
+            renderAll(false);
+            return;
+          }
+          return;
+        }
+
+        if (isTyping || e.ctrlKey || e.metaKey || e.altKey) return;
+
+        const hasOpenModal =
+          lightboxModal.classList.contains('is-open') ||
+          newModal.classList.contains('is-open') ||
+          searchModal.classList.contains('is-open') ||
+          restModal.classList.contains('is-open') ||
+          settingsModal.classList.contains('is-open');
+        if (hasOpenModal) return;
+
+        const key = (e.key || '').toLowerCase();
+        const code = e.code || '';
+
+        if (code === 'KeyN' || key === 'n') {
+          e.preventDefault();
+          openNewModal();
+        } else if (e.key === '/' || (code === 'Slash' && !e.shiftKey)) {
+          e.preventDefault();
+          openSearchModal();
+        } else if ((code === 'KeyE' || key === 'e') && selectedNoteId && !isFocusMode) {
+          e.preventDefault();
+          isEditMode = !isEditMode;
+          renderReadingPane(false);
+        } else if ((code === 'KeyF' || key === 'f') && selectedNoteId) {
+          e.preventDefault();
+          if (isFocusMode) exitFocusMode();
+          else enterFocusMode();
+        }
+      });
+
+      // ==========================================
+      // 16. ЗАПУСК ПРИЛОЖЕНИЯ
+      // ==========================================
+      async function init() {
+        await loadState();
+        applyStaticTranslations();
+        const { active } = getPartitionedNotes();
+        if (window.innerWidth >= 768) {
+          selectedNoteId = active.length > 0 ? active[0].id : (state.notes[0] ? state.notes[0].id : null);
+        } else {
+          selectedNoteId = null;
+        }
+        renderAll(false);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
