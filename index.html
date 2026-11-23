@@ -4,7 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Nerve</title>
-  <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="" />
+  <meta name="description" content="Local-first notes without folders — untouched thoughts naturally fade into Archive." />
+  <meta id="themeColorMeta" name="theme-color" content="#0A0B0D" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Nerve" />
+  <link rel="manifest" href="./manifest.json" />
+  <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link id="appleTouchIcon" rel="apple-touch-icon" href="./icon.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -985,6 +992,15 @@
           </div>
         </div>
 
+        <!-- Установка PWA (показывается автоматически, когда браузер разрешает установку) -->
+        <div id="pwaInstallSection" class="hidden pt-4 border-t t-border-faint">
+          <div data-i18n="appLabel" class="text-[12px] t-ink-40 mb-2.5">Приложение</div>
+          <button id="installPwaBtn" type="button" class="seg-btn w-full">
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="installApp">Установить на устройство</span>
+          </button>
+        </div>
+
         <!-- Сообщество -->
         <div class="pt-4 border-t t-border-faint">
           <div data-i18n="communityLabel" class="text-[12px] t-ink-40 mb-2.5">Сообщество</div>
@@ -1073,6 +1089,9 @@
           customDaysPh: 'Своё',
           daysUnit: 'дн',
           dataLabel: 'Данные',
+          appLabel: 'Приложение',
+          installApp: 'Установить на устройство',
+          toastInstalled: 'Nerve установлен',
           communityLabel: 'Сообщество',
           importMd: 'Импорт .md / .txt',
           exportMd: 'Экспорт (.md)',
@@ -1168,6 +1187,9 @@
           customDaysPh: 'Custom',
           daysUnit: 'd',
           dataLabel: 'Data',
+          appLabel: 'App',
+          installApp: 'Install on device',
+          toastInstalled: 'Nerve installed',
           communityLabel: 'Community',
           importMd: 'Import .md / .txt',
           exportMd: 'Export (.md)',
@@ -1263,6 +1285,9 @@
           customDaysPh: '自定义',
           daysUnit: '天',
           dataLabel: '数据',
+          appLabel: '应用',
+          installApp: '安装到设备',
+          toastInstalled: 'Nerve 已安装',
           communityLabel: '社区',
           importMd: '导入 .md / .txt',
           exportMd: '导出 (.md)',
@@ -1358,6 +1383,9 @@
           customDaysPh: 'Otro',
           daysUnit: 'd',
           dataLabel: 'Datos',
+          appLabel: 'Aplicación',
+          installApp: 'Instalar en el dispositivo',
+          toastInstalled: 'Nerve instalado',
           communityLabel: 'Comunidad',
           importMd: 'Importar .md / .txt',
           exportMd: 'Exportar (.md)',
@@ -1453,6 +1481,9 @@
           customDaysPh: 'Eigene',
           daysUnit: 'T.',
           dataLabel: 'Daten',
+          appLabel: 'App',
+          installApp: 'Auf Gerät installieren',
+          toastInstalled: 'Nerve installiert',
           communityLabel: 'Community',
           importMd: 'Import .md / .txt',
           exportMd: 'Export (.md)',
@@ -1543,6 +1574,7 @@
       let savedEditSelection = null;
       let newModalImages = [];
       let toastTimer = null;
+      let deferredInstallPrompt = null;
 
       // Таймер режима фокуса
       let focusDurationSec = 25 * 60;
@@ -1721,7 +1753,9 @@
       /* ==========================================
          3. DOM-ССЫЛКИ
          ========================================== */
+      const themeColorMeta = document.getElementById('themeColorMeta');
       const dynamicFavicon = document.getElementById('dynamicFavicon');
+      const appleTouchIcon = document.getElementById('appleTouchIcon');
       const brandHomeBtn = document.getElementById('brandHomeBtn');
       const openSearchBtn = document.getElementById('openSearchBtn');
       const openNewBtn = document.getElementById('openNewBtn');
@@ -1759,6 +1793,8 @@
       const exportMdBtn = document.getElementById('exportMdBtn');
       const backupJsonBtn = document.getElementById('backupJsonBtn');
       const restoreJsonBtn = document.getElementById('restoreJsonBtn');
+      const pwaInstallSection = document.getElementById('pwaInstallSection');
+      const installPwaBtn = document.getElementById('installPwaBtn');
 
       const lightboxModal = document.getElementById('lightboxModal');
       const lightboxImg = document.getElementById('lightboxImg');
@@ -1870,8 +1906,50 @@
       }
 
       /* ==========================================
-         5. ТЕМЫ, ИКОНКА ВКЛАДКИ И ПЕРЕВОД UI
+         5. ТЕМЫ, PWA-ИКОНКИ И ПЕРЕВОД UI
          ========================================== */
+      function updateAppleTouchIcon(bgHex, fgHex) {
+        if (!appleTouchIcon) return;
+        try {
+          const c = document.createElement('canvas');
+          c.width = 180;
+          c.height = 180;
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = bgHex;
+          ctx.fillRect(0, 0, 180, 180);
+
+          const p1 = 180 * 0.34;
+          const p2 = 180 * 0.66;
+          ctx.strokeStyle = fgHex;
+          ctx.globalAlpha = 0.44;
+          ctx.lineWidth = 11;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(p1, p1);
+          ctx.lineTo(p2, p2);
+          ctx.stroke();
+
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = fgHex;
+          ctx.beginPath();
+          ctx.arc(p1, p1, 22, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = bgHex;
+          ctx.beginPath();
+          ctx.arc(p2, p2, 19, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = fgHex;
+          ctx.globalAlpha = 0.78;
+          ctx.lineWidth = 9.5;
+          ctx.beginPath();
+          ctx.arc(p2, p2, 19, 0, Math.PI * 2);
+          ctx.stroke();
+
+          appleTouchIcon.href = c.toDataURL('image/png');
+        } catch (err) {}
+      }
+
       function applyTheme(themeKey) {
         state.theme = themeKey;
         const cls = document.documentElement.classList;
@@ -1879,11 +1957,15 @@
         cls.add('theme-' + themeKey);
 
         const pal = {
-          dark:  { bg: '%230A0B0D', fg: '%23F2F1EC' },
-          light: { bg: '%23F4F3EE', fg: '%2316171A' },
-          sepia: { bg: '%23EBE3D2', fg: '%232A211B' },
-          slate: { bg: '%2312151A', fg: '%23E6EAF0' }
-        }[themeKey] || { bg: '%230A0B0D', fg: '%23F2F1EC' };
+          dark:  { bgHex: '#0A0B0D', fgHex: '#F2F1EC', bg: '%230A0B0D', fg: '%23F2F1EC' },
+          light: { bgHex: '#F4F3EE', fgHex: '#16171A', bg: '%23F4F3EE', fg: '%2316171A' },
+          sepia: { bgHex: '#EBE3D2', fgHex: '#2A211B', bg: '%23EBE3D2', fg: '%232A211B' },
+          slate: { bgHex: '#12151A', fgHex: '#E6EAF0', bg: '%2312151A', fg: '%23E6EAF0' }
+        }[themeKey] || { bgHex: '#0A0B0D', fgHex: '#F2F1EC', bg: '%230A0B0D', fg: '%23F2F1EC' };
+
+        if (themeColorMeta) {
+          themeColorMeta.setAttribute('content', pal.bgHex);
+        }
 
         if (dynamicFavicon) {
           dynamicFavicon.href =
@@ -1895,6 +1977,8 @@
             '<circle cx="25" cy="25" r="4.3" fill="' + pal.bg + '" stroke="' + pal.fg + '" stroke-opacity="0.78" stroke-width="2.2"/>' +
             '</svg>';
         }
+
+        updateAppleTouchIcon(pal.bgHex, pal.fgHex);
 
         themeButtons.querySelectorAll('[data-theme-val]').forEach(btn => {
           btn.classList.toggle('is-active', btn.dataset.themeVal === themeKey);
@@ -2066,7 +2150,6 @@
         const oneBased = imgIdx + 1;
         const rawLines = String(note.body || '').replace(/\r\n/g, '\n').split('\n');
 
-        // Разбиваем заметку на логические блоки для плавного перемещения фото вверх/вниз
         const blocks = [];
         let buf = [];
         let inCode = false;
@@ -2150,7 +2233,6 @@
         if (!note || !fileList || !fileList.length) return;
         if (!Array.isArray(note.images)) note.images = [];
 
-        // Запоминаем точную позицию курсора ДО асинхронного сжатия фото
         const editBodyBefore = document.getElementById('editBodyInput');
         let cursorSnap = null;
         if (isEditMode && editBodyBefore) {
@@ -2179,7 +2261,6 @@
           const combined = newSnippets.join('\n\n');
           const editBodyEl = document.getElementById('editBodyInput');
           if (isEditMode && editBodyEl && cursorSnap) {
-            // Вставляем строго в ту строчку, где стоял курсор
             const start = Math.min(editBodyEl.value.length, Math.max(0, cursorSnap.start));
             const end = Math.min(editBodyEl.value.length, Math.max(start, cursorSnap.end));
             const before = editBodyEl.value.slice(0, start);
@@ -2211,25 +2292,17 @@
         const codeTokens = [];
         let safe = escapeHtml(raw);
 
-        // Временная замена инлайн-кода
         safe = safe.replace(/`([^`]+)`/g, (_, code) => {
           const idx = codeTokens.length;
           codeTokens.push('<code>' + code + '</code>');
           return '\u0000CODE' + idx + '\u0000';
         });
 
-        // Markdown-ссылки [текст](url)
         safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-        // Сноски NotebookLM [1] или [1, 2]
         safe = safe.replace(/\[(\d+(?:\s*,\s*\d+)*)\]/g, '<span class="cite-badge">$1</span>');
-
-        // Жирный, курсив, зачёркнутый
         safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
         safe = safe.replace(/~~([^~]+)~~/g, '<del>$1</del>');
         safe = safe.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
-
-        // Возвращаем инлайн-код
         safe = safe.replace(/\u0000CODE(\d+)\u0000/g, (_, i) => codeTokens[Number(i)] || '');
         return safe;
       }
@@ -2237,7 +2310,7 @@
       function renderNoteBodyHtml(bodyText, imagesArr = []) {
         const lines = String(bodyText || '').replace(/\r\n/g, '\n').split('\n');
         const out = [];
-        let listType = null; // 'ul' | 'ol' | 'check'
+        let listType = null;
         let inCodeBlock = false;
         let codeLines = [];
 
@@ -2251,7 +2324,6 @@
           const line = lines[i];
           const trimmed = line.trim();
 
-          // Блоки кода ```
           if (trimmed.startsWith('```')) {
             closeList();
             if (!inCodeBlock) {
@@ -2269,13 +2341,11 @@
             continue;
           }
 
-          // Пустая строка
           if (!trimmed) {
             closeList();
             continue;
           }
 
-          // Встроенное фото по месту в тексте: ![Фото](img:1) или ![Фото](img:1|left)
           const imgTokenMatch = trimmed.match(INLINE_IMG_TOKEN_RE);
           if (imgTokenMatch) {
             closeList();
@@ -2294,14 +2364,12 @@
             continue;
           }
 
-          // Горизонтальная линия
           if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
             closeList();
             out.push('<hr />');
             continue;
           }
 
-          // Заголовки
           const headingMatch = line.match(/^(#{1,4})\s+(.+)$/);
           if (headingMatch) {
             closeList();
@@ -2310,7 +2378,6 @@
             continue;
           }
 
-          // Цитата
           const quoteMatch = line.match(/^>\s?(.*)$/);
           if (quoteMatch) {
             closeList();
@@ -2318,7 +2385,6 @@
             continue;
           }
 
-          // Чекбокс - [ ] / - [x]
           const checkMatch = line.match(/^\s*[-*]\s+\[([ xX])\]\s*(.*)$/);
           if (checkMatch) {
             if (listType !== 'check') {
@@ -2338,7 +2404,6 @@
             continue;
           }
 
-          // Маркированный список
           const ulMatch = line.match(/^\s*[-*]\s+(.+)$/);
           if (ulMatch) {
             if (listType !== 'ul') {
@@ -2350,7 +2415,6 @@
             continue;
           }
 
-          // Нумерованный список
           const olMatch = line.match(/^\s*\d+\.\s+(.+)$/);
           if (olMatch) {
             if (listType !== 'ol') {
@@ -2362,7 +2426,6 @@
             continue;
           }
 
-          // Обычный абзац
           closeList();
           out.push('<p>' + formatInlineMarkdown(line) + '</p>');
         }
@@ -2401,7 +2464,6 @@
           });
         }
 
-        // Узел «Архив» внизу нити
         items.push(
           '<button id="openRestNodeBtn" type="button" class="thread-node rest-node">' +
             '<span class="node-dot"></span>' +
@@ -2434,7 +2496,6 @@
         const archived = isNoteArchived(note);
         const isConfirmDel = pendingDeleteNoteId === note.id;
 
-        // Верхняя панель заметки (либо панель Фокуса, либо обычная)
         let topBarHtml = '';
         if (isFocusMode) {
           topBarHtml =
@@ -2508,7 +2569,6 @@
             '</div>';
         }
 
-        // Непривязанные к тексту фото (для совместимости со старыми заметками)
         const referenced = getReferencedImageIndices(note.body);
         const looseImages = (note.images || [])
           .map((src, idx) => ({ src, idx }))
@@ -2529,7 +2589,6 @@
 
         let contentHtml = '';
         if (isEditMode) {
-          // Компактная полоска прикреплённых фото в редакторе (только для просмотра и удаления, без дублей)
           const editThumbsHtml = (note.images && note.images.length > 0)
             ? '<div class="mt-6 pt-4 border-t t-border-faint flex flex-wrap gap-3">' +
                 note.images.map((src, idx) =>
@@ -2734,7 +2793,6 @@
           closeAllModals();
           return;
         }
-        // Если фото добавлены в модалке и не вставлены вручную — добавляем их токены в тело
         if (newModalImages.length > 0) {
           const used = getReferencedImageIndices(body);
           const extraTokens = [];
@@ -2959,7 +3017,46 @@
       }
 
       /* ==========================================
-         12. СОБЫТИЯ И ГОРЯЧИЕ КЛАВИШИ
+         12. PWA: УСТАНОВКА И SERVICE WORKER
+         ========================================== */
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        if (pwaInstallSection) {
+          pwaInstallSection.classList.remove('hidden');
+        }
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        if (pwaInstallSection) {
+          pwaInstallSection.classList.add('hidden');
+        }
+        showToast(t('toastInstalled'));
+      });
+
+      if (installPwaBtn) {
+        installPwaBtn.addEventListener('click', async () => {
+          if (!deferredInstallPrompt) return;
+          deferredInstallPrompt.prompt();
+          try {
+            await deferredInstallPrompt.userChoice;
+          } catch (err) {}
+          deferredInstallPrompt = null;
+          if (pwaInstallSection) {
+            pwaInstallSection.classList.add('hidden');
+          }
+        });
+      }
+
+      if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
+
+      /* ==========================================
+         13. СОБЫТИЯ И ГОРЯЧИЕ КЛАВИШИ
          ========================================== */
       brandHomeBtn.addEventListener('click', () => {
         document.body.classList.remove('mobile-reading-open');
@@ -2982,7 +3079,6 @@
         });
       });
 
-      // Новая заметка
       saveNewBtn.addEventListener('click', saveNewNote);
       newAddPhotoBtn.addEventListener('click', () => newImageInput.click());
       newAddCheckBtn.addEventListener('click', () => {
@@ -3011,7 +3107,6 @@
         }
       });
 
-      // Поиск
       searchInput.addEventListener('input', () => renderSearchResults(searchInput.value));
       searchResults.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-search-id]');
@@ -3020,7 +3115,6 @@
         selectNote(btn.dataset.searchId, true);
       });
 
-      // Архив
       restList.addEventListener('click', (e) => {
         const openBtn = e.target.closest('[data-rest-open]');
         if (openBtn) {
@@ -3041,7 +3135,6 @@
         }
       });
 
-      // Настройки
       themeButtons.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-theme-val]');
         if (!btn) return;
@@ -3097,7 +3190,6 @@
         noteImageInput.value = '';
       });
 
-      // Клик по узлам левой нити и узлу «Архив»
       nodesRow.addEventListener('click', (e) => {
         closeThreadContextMenu();
         const restBtn = e.target.closest('#openRestNodeBtn');
@@ -3110,7 +3202,6 @@
         selectNote(nodeBtn.dataset.noteId, true);
       });
 
-      // Правый клик (ПКМ) по заметке в левой нити — контекстное меню
       nodesRow.addEventListener('contextmenu', (e) => {
         const nodeBtn = e.target.closest('[data-note-id]');
         if (!nodeBtn) return;
@@ -3121,7 +3212,6 @@
 
       timelineViewport.addEventListener('scroll', closeThreadContextMenu);
 
-      // Обработка действий контекстного меню (ПКМ)
       threadContextMenu.addEventListener('click', (e) => {
         e.stopPropagation();
         const btn = e.target.closest('[data-ctx-action]');
@@ -3203,9 +3293,7 @@
         }
       });
 
-      // Клики внутри правого листа (действия, чекбоксы, фото, фокус)
       readingPane.addEventListener('click', (e) => {
-        // Движение фото вверх / вниз по тексту заметки
         const moveImgBtn = e.target.closest('[data-img-move]');
         if (moveImgBtn) {
           e.stopPropagation();
@@ -3220,7 +3308,6 @@
           return;
         }
 
-        // Выравнивание фото (слева / по ширине / справа)
         const alignImgBtn = e.target.closest('[data-img-align]');
         if (alignImgBtn) {
           e.stopPropagation();
@@ -3235,7 +3322,6 @@
           return;
         }
 
-        // Удаление фото
         const remImgBtn = e.target.closest('[data-remove-img]');
         if (remImgBtn) {
           e.stopPropagation();
@@ -3250,7 +3336,6 @@
           return;
         }
 
-        // Открытие фото в Lightbox
         const lbImg = e.target.closest('[data-lightbox-src]');
         if (lbImg) {
           lightboxImg.src = lbImg.getAttribute('src') || '';
@@ -3258,7 +3343,6 @@
           return;
         }
 
-        // Живой непрыгающий чекбокс в режиме чтения
         const checkBtn = e.target.closest('[data-toggle-check]');
         if (checkBtn) {
           const note = state.notes.find(n => n.id === selectedNoteId);
@@ -3274,7 +3358,6 @@
               note.lastHeatedAt = Date.now();
               saveState();
 
-              // Обновляем только саму кнопку и текст без перерисовки листа — скролл не прыгает!
               const nextChecked = !isCheckedNow;
               checkBtn.classList.toggle('is-checked', nextChecked);
               checkBtn.setAttribute('aria-pressed', String(nextChecked));
@@ -3289,7 +3372,6 @@
           return;
         }
 
-        // Пресеты таймера Фокуса
         const presetBtn = e.target.closest('[data-focus-preset]');
         if (presetBtn) {
           stopFocusTimer();
@@ -3299,7 +3381,6 @@
           return;
         }
 
-        // Кнопки панели действий заметки
         const actionBtn = e.target.closest('[data-action]');
         if (!actionBtn) return;
         const action = actionBtn.dataset.action;
@@ -3405,7 +3486,6 @@
         }
       });
 
-      // Двойной клик по тексту заметки на ПК открывает редактирование
       readingPane.addEventListener('dblclick', (e) => {
         if (!selectedNoteId || isEditMode) return;
         if (e.target.closest('#noteReadBody') && !e.target.closest('button, a, img, .img-toolbar')) {
@@ -3415,7 +3495,6 @@
         }
       });
 
-      // Вставка фото из буфера обмена (Ctrl+V) строго в позицию курсора без дублирования
       document.addEventListener('paste', (e) => {
         if (!selectedNoteId || isAnyModalOpen()) return;
         const items = e.clipboardData && e.clipboardData.items;
@@ -3442,7 +3521,6 @@
       readingPane.addEventListener('drop', (e) => {
         if (!selectedNoteId || !e.dataTransfer) return;
 
-        // Перетащили файл изображения с компьютера
         const files = e.dataTransfer.files;
         if (files && files.length) {
           e.preventDefault();
@@ -3451,7 +3529,6 @@
           return;
         }
 
-        // Блокируем случайный сброс сырого data:image/... (base64) в текстовое поле
         const plain = e.dataTransfer.getData('text/plain') || '';
         const uri = e.dataTransfer.getData('text/uri-list') || '';
         if (plain.startsWith('data:image/') || uri.startsWith('data:image/')) {
@@ -3460,7 +3537,6 @@
         }
       });
 
-      // Закрытие меню действий (···) и контекстного меню (ПКМ) при клике мимо
       document.addEventListener('click', (e) => {
         if (isNoteMenuOpen && !e.target.closest('.note-menu-wrap')) {
           closeNoteMenuDom();
@@ -3470,7 +3546,6 @@
         }
       });
 
-      // Горячие клавиши — работают на ЛЮБОЙ раскладке через e.code
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           if (contextMenuNoteId) {
@@ -3496,7 +3571,6 @@
           }
         }
 
-        // Ctrl/Cmd + Enter сохраняет новую заметку или завершает редактирование
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
           if (newModal.classList.contains('is-open')) {
             e.preventDefault();
@@ -3511,7 +3585,6 @@
           }
         }
 
-        // Не перехватываем хоткеи при вводе текста или открытых модалках
         const tag = document.activeElement && document.activeElement.tagName;
         if (tag === 'INPUT' || tag === 'TEXTAREA' || isAnyModalOpen() || e.ctrlKey || e.metaKey || e.altKey) {
           return;
@@ -3535,7 +3608,7 @@
       });
 
       /* ==========================================
-         13. СТАРТ ПРИЛОЖЕНИЯ
+         14. СТАРТ ПРИЛОЖЕНИЯ
          ========================================== */
       async function init() {
         await loadState();
