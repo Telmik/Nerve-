@@ -5663,7 +5663,7 @@
       });
 
       // Инициализация
-      const APP_VERSION = '1.5.0';
+      const APP_VERSION = '1.5.1';
       document.getElementById('settingsVersion').textContent = 'v' + APP_VERSION;
 
       const isHosted = !window.NerveAndroid && isSecureContext && /^https?:$/.test(location.protocol);
@@ -5897,7 +5897,7 @@
           if (saved.result.conflicts) showToast(t('cloudConflict'));
         }
         if (prepared.dirty.size > prepared.changes.length) cloud.requested = true;
-        if (sameCloudSession(session)) cloud.status = 'cloudSynced';
+        if (!cloud.requested && sameCloudSession(session)) cloud.status = 'cloudSynced';
       }
 
       async function syncCloudNow() {

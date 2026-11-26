@@ -1,6 +1,7 @@
-const CACHE_PREFIX = 'nerve-pwa-';
+// CacheStorage is shared by all installations on the origin.
+const CACHE_PREFIX = 'nerve-offline:' + encodeURIComponent(self.registration.scope) + ':';
 // Match the release number shown in Settings.
-const CACHE_NAME = CACHE_PREFIX + 'v1.5.0';
+const CACHE_NAME = CACHE_PREFIX + 'v1.5.1';
 const CORE_ASSETS = new Set([
   './',
   './index.html',
@@ -41,6 +42,9 @@ self.addEventListener('fetch', event => {
       response = await fetch(event.request, { cache: 'no-cache' });
     } catch {
       return (await cache.match(cacheKey.href)) || Response.error();
+    }
+    if (response.status >= 500) {
+      return (await cache.match(cacheKey.href)) || response;
     }
     if (response.ok) {
       try { await cache.put(cacheKey.href, response.clone()); } catch {}
