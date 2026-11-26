@@ -1182,6 +1182,36 @@
     .settings-heading:focus-visible { outline: 2px solid var(--border-subtle); outline-offset: 4px; }
     .settings-label { font-size: 12px; color: var(--ink-62); }
     .settings-field { display: grid; gap: 8px; }
+    .settings-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 42px;
+      padding: 7px 10px;
+      border: 1px solid var(--border-faint);
+      border-radius: 10px;
+      color: var(--ink-84);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .settings-toggle input {
+      appearance: none;
+      flex-shrink: 0;
+      width: 34px;
+      height: 20px;
+      margin: 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      background: var(--surface) radial-gradient(circle, var(--ink-62) 64%, transparent 69%) left 3px center / 12px 12px no-repeat;
+      cursor: pointer;
+    }
+    .settings-toggle input:checked {
+      background: var(--hot) radial-gradient(circle, var(--bg) 64%, transparent 69%) right 3px center / 12px 12px no-repeat;
+    }
+    .settings-toggle input:focus-visible { outline: 2px solid var(--ink-62); outline-offset: 2px; }
+    .word-count { margin: 0; color: var(--ink-40); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .note-article .word-count { margin-bottom: 12px; }
     @media (max-width: 600px) {
       .settings-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
       .settings-nav {
@@ -1495,6 +1525,7 @@
           placeholder="Заголовок (необязательно)"
           class="new-title-field"
         />
+        <p id="newWordCount" class="word-count" hidden></p>
         <textarea
           id="newBodyInput"
           rows="9"
@@ -1597,6 +1628,16 @@
                 <button type="button" data-lang-val="es" class="seg-btn">ES</button>
                 <button type="button" data-lang-val="de" class="seg-btn">DE</button>
               </div>
+            </div>
+            <div class="settings-field">
+              <label class="settings-toggle">
+                <span data-i18n="wordCountSetting">Счётчик слов</span>
+                <input id="showWordCountInput" type="checkbox" role="switch" />
+              </label>
+              <label class="settings-toggle">
+                <span data-i18n="autocorrectSetting">Автокоррекция (Т9)</span>
+                <input id="autocorrectInput" type="checkbox" role="switch" />
+              </label>
             </div>
             <div class="settings-field">
               <div data-i18n="coolingLabel" class="settings-label">Автоархив</div>
@@ -1757,6 +1798,9 @@
         ru: {
           customizationTitle: "Кастомизация",
           systemTitle: "Система",
+          wordCountSetting: "Счётчик слов",
+          wordCountValue: "Слов: {n}",
+          autocorrectSetting: "Автокоррекция (Т9)",
           deleteAccount: "Удалить аккаунт",
           deleteAccountMessage: "Аккаунт и облачные заметки будут удалены навсегда. Заметки в этом браузере сохранятся. Введи пароль для подтверждения.",
           cloudDeleting: "Удаляем аккаунт…",
@@ -1910,6 +1954,9 @@
         en: {
           customizationTitle: "Customization",
           systemTitle: "System",
+          wordCountSetting: "Word count",
+          wordCountValue: "Words: {n}",
+          autocorrectSetting: "Autocorrect",
           deleteAccount: "Delete account",
           deleteAccountMessage: "Your account and cloud notes will be permanently deleted. Notes in this browser will stay here. Enter your password to confirm.",
           cloudDeleting: "Deleting account…",
@@ -2063,6 +2110,9 @@
         zh: {
           customizationTitle: "外观",
           systemTitle: "系统",
+          wordCountSetting: "字词统计",
+          wordCountValue: "{n} 个词",
+          autocorrectSetting: "自动纠错",
           deleteAccount: "删除账号",
           deleteAccountMessage: "你的账号和云端笔记将被永久删除。此浏览器中的笔记会保留。请输入密码确认。",
           cloudDeleting: "正在删除账号…",
@@ -2216,6 +2266,9 @@
         es: {
           customizationTitle: "Personalización",
           systemTitle: "Sistema",
+          wordCountSetting: "Contador de palabras",
+          wordCountValue: "Palabras: {n}",
+          autocorrectSetting: "Autocorrección",
           deleteAccount: "Eliminar cuenta",
           deleteAccountMessage: "Tu cuenta y las notas en la nube se eliminarán para siempre. Las notas de este navegador se conservarán. Introduce tu contraseña para confirmar.",
           cloudDeleting: "Eliminando cuenta…",
@@ -2369,6 +2422,9 @@
         de: {
           customizationTitle: "Darstellung",
           systemTitle: "System",
+          wordCountSetting: "Wortzähler",
+          wordCountValue: "Wörter: {n}",
+          autocorrectSetting: "Autokorrektur",
           deleteAccount: "Konto löschen",
           deleteAccountMessage: "Dein Konto und deine Cloud-Notizen werden dauerhaft gelöscht. Die Notizen in diesem Browser bleiben erhalten. Gib zur Bestätigung dein Passwort ein.",
           cloudDeleting: "Konto wird gelöscht…",
@@ -2539,11 +2595,16 @@
       const SAFE_IMAGE_RE = /^(?:data:image\/(?:png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+|https:\/\/[^\s"'<>]+)$/i;
       const INLINE_IMG_TOKEN_RE = /^!\[([^\]]*)\]\(img:(\d+)(?:\|(left|right|full))?\)$/;
       const MD_EXT_IMG_RE = /^!\[([^\]]*)\]\((https:\/\/[^\s)]+)\)$/;
+      const wordSegmenter = typeof Intl.Segmenter === 'function'
+        ? new Intl.Segmenter(undefined, { granularity: 'word' })
+        : null;
 
       let state = {
         theme: 'dark',
         lang: 'ru',
         coolingDays: 30,
+        showWordCount: true,
+        autocorrect: true,
         generation: 1,
         revision: -1,
         notes: []
@@ -2744,7 +2805,9 @@
         return {
           theme: ['dark', 'light', 'sepia', 'slate'].includes(source.theme) ? source.theme : (fallback.theme || 'dark'),
           lang: Object.hasOwn(I18N, source.lang) ? source.lang : (fallback.lang || 'ru'),
-          coolingDays: Math.max(1, Math.min(365, Number(source.coolingDays) || fallback.coolingDays || 30))
+          coolingDays: Math.max(1, Math.min(365, Number(source.coolingDays) || fallback.coolingDays || 30)),
+          showWordCount: typeof source.showWordCount === 'boolean' ? source.showWordCount : (fallback.showWordCount ?? true),
+          autocorrect: typeof source.autocorrect === 'boolean' ? source.autocorrect : (fallback.autocorrect ?? true)
         };
       }
 
@@ -2855,7 +2918,7 @@
       }
 
       function applyDatabaseSnapshot({ meta, notes }) {
-        Object.assign(state, meta.settings, { generation: meta.generation, revision: meta.revision });
+        Object.assign(state, getSettings(meta.settings), { generation: meta.generation, revision: meta.revision });
         state.cloudUserId = meta.cloud?.userId;
         state.notes = projectEdits(notes);
       }
@@ -3276,6 +3339,7 @@
       const draftStatus = document.getElementById('draftStatus');
       const newTitleInput = document.getElementById('newTitleInput');
       const newBodyInput = document.getElementById('newBodyInput');
+      const newWordCount = document.getElementById('newWordCount');
       const newModalPreview = document.getElementById('newModalPreview');
       const newAddPhotoBtn = document.getElementById('newAddPhotoBtn');
       const newAddCheckBtn = document.getElementById('newAddCheckBtn');
@@ -3308,6 +3372,8 @@
       const deleteAccountStatus = document.getElementById('deleteAccountStatus');
       const themeButtons = document.getElementById('themeButtons');
       const langButtons = document.getElementById('langButtons');
+      const showWordCountInput = document.getElementById('showWordCountInput');
+      const autocorrectInput = document.getElementById('autocorrectInput');
       const coolingButtons = document.getElementById('coolingButtons');
       const customDaysInput = document.getElementById('customDaysInput');
       const savedStatusLabel = document.getElementById('savedStatusLabel');
@@ -3550,10 +3616,50 @@
         langButtons.querySelectorAll('[data-lang-val]').forEach(btn => {
           btn.classList.toggle('is-active', btn.dataset.langVal === state.lang);
         });
+        updateWritingSettingsUi();
         updateCoolingControlsUi();
         updateSavedStatusLabel();
         updatePwaInstallUi();
         renderCloudStatus();
+      }
+
+      function applyNoteAutocorrect(...inputs) {
+        for (const input of inputs) {
+          if (!input) continue;
+          input.spellcheck = state.autocorrect;
+          input.setAttribute('autocorrect', state.autocorrect ? 'on' : 'off');
+        }
+      }
+
+      function updateWordCount(counter, body) {
+        counter.hidden = !state.showWordCount;
+        if (!state.showWordCount) return;
+        const template = document.createElement('template');
+        // Separate blocks while keeping words split by inline formatting intact.
+        template.innerHTML = renderNoteBodyHtml(body).replace(/<(?:p|li|h[1-4]|td|th|pre|blockquote)(?=[\s>])/g, ' $&');
+        const text = template.content.textContent;
+        let count = 0;
+        if (wordSegmenter) {
+          for (const segment of wordSegmenter.segment(text)) {
+            if (segment.isWordLike) count++;
+          }
+        } else {
+          count = text.match(/[\p{L}\p{N}][\p{L}\p{M}\p{N}]*(?:['’][\p{L}\p{N}][\p{L}\p{M}\p{N}]*)*/gu)?.length ?? 0;
+        }
+        counter.textContent = t('wordCountValue', { n: count.toLocaleString(state.lang) });
+      }
+
+      function updateWritingSettingsUi() {
+        showWordCountInput.checked = state.showWordCount;
+        autocorrectInput.checked = state.autocorrect;
+        const editTitle = document.getElementById('editTitleInput');
+        const editBody = document.getElementById('editBodyInput');
+        applyNoteAutocorrect(newTitleInput, newBodyInput, editTitle, editBody);
+        updateWordCount(newWordCount, newBodyInput.value);
+        const noteCounter = document.getElementById('noteWordCount');
+        if (noteCounter) {
+          updateWordCount(noteCounter, editBody?.value ?? state.notes.find(note => note.id === selectedNoteId)?.body);
+        }
       }
 
       function updateCoolingControlsUi() {
@@ -4270,6 +4376,7 @@
             '</div>';
         }
 
+        const counterHtml = '<p id="noteWordCount" class="word-count" hidden></p>';
         let contentHtml = '';
         if (isEditMode) {
           const editThumbsHtml = (note.images && note.images.length > 0)
@@ -4286,6 +4393,7 @@
 
           contentHtml =
             '<input id="editTitleInput" type="text" class="edit-title-input" value="' + escapeHtml(note.title) + '" placeholder="' + escapeHtml(t('titlePh')) + '" />' +
+            counterHtml +
             '<textarea id="editBodyInput" class="edit-body-input" placeholder="' + escapeHtml(t('bodyPh')) + '">' + escapeHtml(note.body) + '</textarea>' +
             editThumbsHtml;
         } else {
@@ -4294,6 +4402,7 @@
             : '';
           contentHtml =
             titleHtml +
+            counterHtml +
             '<div id="noteReadBody" class="md-body">' + renderNoteBodyHtml(note.body, note.images || []) + '</div>' +
             imagesHtml;
         }
@@ -4305,10 +4414,13 @@
           '</article>';
 
         hydrateSafeImages(readingPane, note.images || []);
+        const noteCounter = document.getElementById('noteWordCount');
+        updateWordCount(noteCounter, note.body);
 
         if (isEditMode) {
           const titleEl = document.getElementById('editTitleInput');
           const bodyEl = document.getElementById('editBodyInput');
+          applyNoteAutocorrect(titleEl, bodyEl);
           if (bodyEl) {
             autoResizeTextarea(bodyEl);
             bodyEl.focus();
@@ -4323,6 +4435,7 @@
             bodyEl.addEventListener('input', () => {
               rememberCursor();
               autoResizeTextarea(bodyEl);
+              updateWordCount(noteCounter, bodyEl.value);
               syncCurrentNoteEdits(note, 'body', previousBody, bodyEl.value);
               previousBody = bodyEl.value;
             });
@@ -4617,6 +4730,7 @@
           '</div>'
         ).join('');
         hydrateSafeImages(newModalPreview, newModalImages);
+        updateWordCount(newWordCount, newBodyInput.value);
       }
 
       async function saveNewNote() {
@@ -4858,9 +4972,7 @@
           version: 3,
           exportedAt: Date.now(),
           state: {
-            theme: state.theme,
-            lang: state.lang,
-            coolingDays: state.coolingDays,
+            ...getSettings(state),
             notes: state.notes.map(normalizeNote)
           }
         }, null, 2);
@@ -5033,7 +5145,10 @@
       });
 
       newTitleInput.addEventListener('input', saveNewNoteDraft);
-      newBodyInput.addEventListener('input', saveNewNoteDraft);
+      newBodyInput.addEventListener('input', () => {
+        updateWordCount(newWordCount, newBodyInput.value);
+        saveNewNoteDraft();
+      });
       saveNewBtn.addEventListener('click', saveNewNote);
       newAddPhotoBtn.addEventListener('click', () => newImageInput.click());
       newAddCheckBtn.addEventListener('click', () => addChecklistItem(newBodyInput));
@@ -5134,6 +5249,13 @@
         applyI18nToStaticDom();
         renderAll(false);
       });
+
+      for (const [control, key] of [[showWordCountInput, 'showWordCount'], [autocorrectInput, 'autocorrect']]) {
+        control.addEventListener('change', async () => {
+          await persistSettings({ [key]: control.checked });
+          updateWritingSettingsUi();
+        });
+      }
 
       coolingButtons.addEventListener('click', async (e) => {
         const btn = e.target.closest('[data-days-val]');
@@ -5541,7 +5663,7 @@
       });
 
       // Инициализация
-      const APP_VERSION = '1.4.1';
+      const APP_VERSION = '1.5.0';
       document.getElementById('settingsVersion').textContent = 'v' + APP_VERSION;
 
       const isHosted = !window.NerveAndroid && isSecureContext && /^https?:$/.test(location.protocol);
