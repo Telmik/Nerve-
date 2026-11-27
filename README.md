@@ -12,7 +12,7 @@
 
 ## Русский
 
-Nerve — бесплатное приложение для заметок.
+Nerve - бесплатное приложение для заметок.
 
 - Синхронизация заметок между телефоном и компьютером в веб-версии.
 - Режим фокуса с таймером. На компьютере откройте заметку и нажмите **F**.
@@ -20,7 +20,7 @@ Nerve — бесплатное приложение для заметок.
 - Экспорт заметок в файлы Markdown (`.md`).
 - Исходный код веб-версии доступен на GitHub.
 - Перенос заметок с фото через бэкап (`.json`). На старом устройстве откройте **Настройки → Данные** и нажмите **Бэкап (.json)**. На новом устройстве выберите **Восстановить (.json)** и откройте этот файл. Восстановление заменит текущие заметки на новом устройстве.
-- Четыре темы интерфейса — «Графит» (тёмная), «Бумага» (светлая), «Книга» (бежевая) и «Ночь» (тёмно-синяя).
+- Четыре темы интерфейса - «Графит» (тёмная), «Бумага» (светлая), «Книга» (бежевая) и «Ночь» (тёмно-синяя).
 
 ### Скриншоты
 
@@ -84,7 +84,7 @@ Nerve is a free note-taking app.
 - Export notes as Markdown files (`.md`).
 - The web app's source code is available on GitHub.
 - Move notes and photos with a `.json` backup. On your old device, go to **Settings → Data** and choose **Backup (.json)**. On your new device, choose **Restore (.json)** and open that file. Restoring the backup replaces the notes on your new device.
-- Four themes — Graphite (dark), Paper (light), Book (beige), and Night (dark blue).
+- Four themes - Graphite (dark), Paper (light), Book (beige), and Night (dark blue).
 
 [View screenshots](#скриншоты)
 
